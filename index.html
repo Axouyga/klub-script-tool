@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klub Script Generator</title>
+<style>
+  :root {
+    --pink: #FF2D6B;
+    --pink-dim: rgba(255,45,107,0.12);
+    --dark: #0D0D0D;
+    --card-bg: #1A1A1A;
+    --card-border: #2A2A2A;
+    --text: #F0F0F0;
+    --text-muted: #888;
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: hidden; }
+  body { background: var(--dark); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  /* ─── HEADER ─── */
+  header {
+    background: linear-gradient(135deg, #1a0010 0%, #0D0D0D 60%);
+    border-bottom: 1px solid #2A0020;
+    padding: 20px 32px;
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo-title { display: flex; align-items: center; gap: 12px; }
+  .k { background: var(--pink); color: white; font-weight: 900; font-size: 20px; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  h1 { font-size: 18px; font-weight: 700; }
+  h1 span { color: var(--pink); }
+  .header-tag { font-size: 11px; color: var(--text-muted); background: #1e1e1e; border: 1px solid #333; padding: 4px 10px; border-radius: 20px; }
+
+  /* ─── MAIN LAYOUT ─── */
+  main { max-width: 900px; margin: 0 auto; padding: 28px 24px 60px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ─── STEP CARD ─── */
+  .step-card {
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px;
+    overflow: hidden; transition: border-color 0.2s;
+  }
+  .step-card.active { border-color: #3a2030; }
+  .step-head {
+    padding: 16px 20px; display: flex; align-items: center; gap: 14px; cursor: pointer;
+    user-select: none;
+  }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #2a2a2a; border: 1.5px solid #444;
+    color: var(--text-muted); font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .step-card.done .step-num { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+  .step-card.active .step-num { background: var(--pink-dim); border-color: var(--pink); color: var(--pink); }
+  .step-title { font-weight: 700; font-size: 14px; }
+  .step-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .step-chevron { margin-left: auto; color: var(--text-muted); font-size: 14px; transition: transform 0.2s; }
+  .step-card.open .step-chevron { transform: rotate(180deg); }
+  .step-body { padding: 0 20px 20px; display: none; }
+  .step-card.open .step-body { display: block; }
+
+  /* ─── FORM ELEMENTS ─── */
+  .form-row { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .form-group { flex: 1; min-width: 180px; }
+  .form-group.full { flex: 100%; min-width: 100%; }
+  label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
+  input[type="text"], textarea, select {
+    width: 100%; background: #111; border: 1px solid #333; border-radius: 10px;
+    padding: 10px 13px; color: var(--text); font-size: 14px; outline: none;
+    transition: border-color 0.2s; font-family: inherit;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--pink); }
+  input[type="text"]::placeholder, textarea::placeholder { color: #555; }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+  select option { background: #1a1a1a; }
+
+  /* ─── SEARCH BAR ─── */
+  .search-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .search-row input { flex: 1; }
+  .btn-search {
+    background: #222; border: 1px solid #444; border-radius: 10px; color: var(--text-muted);
+    padding: 0 14px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-search:hover { border-color: #666; color: var(--text); }
+  .btn-search svg { width: 14px; height: 14px; }
+
+  /* ─── OFFERS ─── */
+  .offer-block {
+    border: 1px solid var(--card-border); border-radius: 12px; padding: 14px;
+    margin-bottom: 12px;
+  }
+  .offer-block.unique { border-left: 3px solid var(--pink); }
+  .offer-block.permanente { border-left: 3px solid var(--green); }
+  .offer-type-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .offer-block.unique .offer-type-label { color: var(--pink); }
+  .offer-block.permanente .offer-type-label { color: var(--green); }
+
+  /* ─── PILL SELECTORS ─── */
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .pill {
+    padding: 7px 14px; border-radius: 20px; border: 1.5px solid #333;
+    background: transparent; color: var(--text-muted); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .pill:hover { border-color: #555; color: var(--text); }
+  .pill.selected { background: var(--pink-dim); border-color: var(--pink); color: var(--pink); }
+  .pill.selected.green { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+
+  /* ─── HOOKS SECTION ─── */
+  .hooks-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .hook-card {
+    border: 1.5px solid #2a2a2a; border-radius: 10px; padding: 12px 14px;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .hook-card:hover { border-color: #444; background: #1f1f1f; }
+  .hook-card.selected { border-color: var(--pink); background: var(--pink-dim); }
+  .hook-card.selected .hook-ref { color: var(--pink); }
+  .hook-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #444; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .hook-card.selected .hook-check { background: var(--pink); border-color: var(--pink); }
+  .hook-check svg { display: none; }
+  .hook-card.selected .hook-check svg { display: block; }
+  .hook-text { flex: 1; }
+  .hook-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .hook-example { font-size: 11px; color: var(--text-muted); font-style: italic; line-height: 1.4; }
+  .hook-ref { font-size: 10px; color: #555; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .hook-perf { font-size: 10px; font-weight: 800; color: #ffd700; margin-left: auto; white-space: nowrap; padding-left: 8px; }
+
+  /* ─── GENERATE BUTTON ─── */
+  .btn-generate {
+    width: 100%; padding: 14px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, var(--pink), #c0185a);
+    color: white; font-size: 15px; font-weight: 800; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-generate:active { transform: translateY(0); opacity: 0.85; }
+  .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ─── SCRIPT OUTPUT ─── */
+  #output-section { display: none; }
+  .script-card {
+    background: #111; border: 1px solid #2a2a2a; border-radius: 16px; overflow: hidden;
+  }
+  .script-top {
+    padding: 16px 20px; background: #151515; border-bottom: 1px solid #2a2a2a;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  .script-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .script-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .badge-partner { background: var(--pink-dim); color: var(--pink); }
+  .badge-dur { background: #1e2e1e; color: var(--green); }
+  .badge-tone { background: #1e1e2e; color: #88aaff; }
+  .script-actions { display: flex; gap: 8px; }
+  .btn-copy {
+    padding: 7px 14px; border-radius: 8px; border: 1px solid #444;
+    background: #1a1a1a; color: var(--text-muted); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-copy:hover { border-color: var(--pink); color: var(--pink); }
+  .btn-copy.copied { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+  .script-body { padding: 20px; }
+
+  .script-segment {
+    display: flex; gap: 14px; margin-bottom: 12px; padding: 12px 14px;
+    border-radius: 10px; border: 1px solid transparent;
+  }
+  .script-segment:last-child { margin-bottom: 0; }
+  .seg-hook { background: #200e15; border-color: #3a1020; }
+  .seg-context { background: #0f1520; border-color: #1a2535; }
+  .seg-product { background: #111; border-color: #222; }
+  .seg-offer { background: #0f1f0f; border-color: #1a3020; }
+  .seg-cta { background: #1a0010; border-color: #2a1020; }
+  .seg-shoot { background: #15110a; border: 1px dashed #5a4420; }
+  .seg-time { font-size: 10px; font-weight: 800; color: #555; min-width: 36px; padding-top: 2px; }
+  .seg-hook .seg-time { color: var(--pink); }
+  .seg-offer .seg-time { color: var(--green); }
+  .seg-cta .seg-time { color: #ff88aa; }
+  .seg-shoot .seg-time { color: #d4a23a; }
+  .seg-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .seg-hook .seg-label { color: var(--pink); }
+  .seg-context .seg-label { color: #88aaff; }
+  .seg-product .seg-label { color: var(--text-muted); }
+  .seg-offer .seg-label { color: var(--green); }
+  .seg-cta .seg-label { color: #ff88aa; }
+  .seg-shoot .seg-label { color: #d4a23a; }
+  .seg-text { font-size: 13px; line-height: 1.6; outline: none; border-radius: 6px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s; }
+  .seg-text:focus { background: rgba(255,255,255,0.04); box-shadow: 0 0 0 1px rgba(255,255,255,0.1); }
+  .seg-text:empty:before { content: attr(data-placeholder); color: #6a5a30; font-style: italic; }
+  .seg-shoot .seg-text { min-height: 40px; color: #e8c97a; }
+
+  .script-plain { display: none; padding: 20px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; color: var(--text); }
+
+  .view-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
+  .view-btn {
+    padding: 5px 12px; border-radius: 8px; border: 1px solid #333;
+    background: transparent; color: var(--text-muted); font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .view-btn.active { background: #222; border-color: #555; color: var(--text); }
+
+  /* ─── PROMPT BOX ─── */
+  .prompt-box { background: #0e0e0e; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px; margin-top: 16px; }
+  .prompt-box-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .prompt-text { font-size: 12px; color: #aaa; line-height: 1.6; white-space: pre-wrap; font-family: 'SF Mono', 'Fira Code', monospace; }
+
+  /* ─── WORD COUNT ─── */
+  .wc-bar { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 14px; background: #0f0f0f; border-radius: 8px; border: 1px solid #1e1e1e; }
+  .wc-label { font-size: 11px; color: var(--text-muted); }
+  .wc-val { font-size: 13px; font-weight: 800; color: var(--green); }
+  .wc-target { font-size: 11px; color: #555; }
+  .wc-bar-fill-wrap { flex: 1; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
+  .wc-bar-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s; }
+  .wc-bar-fill.over { background: var(--pink); }
+
+  /* ─── UTILITIES ─── */
+  .divider { height: 1px; background: var(--card-border); margin: 14px 0; }
+  .hint { font-size: 11px; color: #555; margin-top: 5px; line-height: 1.5; }
+  .loading { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); padding: 16px 0; }
+  .spinner { width: 18px; height: 18px; border: 2px solid #333; border-top-color: var(--pink); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── SETTINGS MODAL ─── */
+  .settings-btn {
+    background: transparent; border: 1px solid #333; border-radius: 8px; color: var(--text-muted);
+    padding: 6px 10px; cursor: pointer; transition: all 0.15s; font-size: 16px; line-height: 1;
+  }
+  .settings-btn:hover { border-color: #555; color: var(--text); }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #1a1a1a; border: 1px solid #333; border-radius: 16px;
+    padding: 24px; width: 480px; max-width: calc(100vw - 32px);
+  }
+  .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .btn-modal-save {
+    flex: 1; padding: 10px; border: none; border-radius: 10px;
+    background: var(--pink); color: white; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .btn-modal-save:hover { opacity: 0.85; }
+  .btn-modal-cancel {
+    padding: 10px 18px; border: 1px solid #333; border-radius: 10px;
+    background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-modal-cancel:hover { border-color: #555; color: var(--text); }
+  .api-key-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+  .api-key-status.ok { background: var(--green-dim); color: var(--green); }
+  .api-key-status.missing { background: rgba(255,100,100,0.1); color: #ff6464; }
+
+  /* ─── RESEARCH STATE ─── */
+  .btn-search.loading { pointer-events: none; opacity: 0.7; }
+  .btn-search .spin-sm { width: 13px; height: 13px; border: 2px solid #555; border-top-color: var(--pink); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .btn-search.loading .spin-sm { display: block; }
+  .btn-search.loading .search-icon { display: none; }
+  .research-result-banner {
+    display: none; background: var(--green-dim); border: 1px solid rgba(74,222,128,0.25);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: var(--green);
+    line-height: 1.5;
+  }
+  .research-result-banner.show { display: block; }
+  .research-error-banner {
+    display: none; background: rgba(255,100,100,0.08); border: 1px solid rgba(255,100,100,0.2);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #ff8080;
+  }
+  .research-error-banner.show { display: block; }
+
+  /* ─── CANDIDATE CARDS ─── */
+  .cand-card {
+    border: 1.5px solid #2a2a2a; border-radius: 10px; padding: 12px 14px;
+    cursor: pointer; transition: all 0.15s; text-align: left;
+  }
+  .cand-card:hover { border-color: var(--pink); background: var(--pink-dim); }
+  .cand-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .cand-name .cand-city { color: var(--pink); font-weight: 600; font-size: 12px; }
+  .cand-addr { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+  .cand-hint { font-size: 11px; color: #666; font-style: italic; }
+
+  /* ─── LIBRARY CARDS ─── */
+  .lib-card { border:1.5px solid #2a2a2a; border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px; transition:all 0.15s; }
+  .lib-card:hover { border-color:var(--pink); background:var(--pink-dim); }
+  .lib-main { flex:1; cursor:pointer; min-width:0; }
+  .lib-name { font-size:14px; font-weight:700; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .lib-meta { font-size:11px; color:var(--text-muted); }
+  .lib-meta .lib-dot { color:#444; margin:0 5px; }
+  .lib-del { background:transparent; border:1px solid #3a2020; color:#a55; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; transition:all 0.15s; flex-shrink:0; }
+  .lib-del:hover { background:#2a1212; border-color:#a55; color:#f77; }
+  .lib-empty { text-align:center; color:#555; font-size:13px; padding:30px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-title">
+    <div class="k">K</div>
+    <div>
+      <h1>Klub <span>Script</span> Generator</h1>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="settings-btn" onclick="openLibrary()" title="Mes scripts enregistrés" style="font-size:13px;padding:6px 12px;display:flex;align-items:center;gap:6px">
+      📁 Mes scripts <span id="lib-count" style="background:var(--pink);color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:1px 7px;display:none">0</span>
+    </button>
+    <div id="api-status" class="api-key-status missing">⚠ Clé API</div>
+    <button class="settings-btn" onclick="openSettings()" title="Paramètres API">⚙️</button>
+    <div class="header-tag">Vidéos partenaires 🇫🇷</div>
+  </div>
+</header>
+
+<!-- ─── LIBRARY MODAL ─── -->
+<div class="modal-overlay" id="library-overlay" onclick="closeLibraryOutside(event)">
+  <div class="modal" style="width:600px">
+    <div class="modal-title">📁 Mes scripts enregistrés</div>
+    <div class="modal-sub">Clique un script pour le rouvrir. Stocké localement dans ton navigateur.</div>
+    <div id="library-list" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeLibrary()" style="flex:1">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SETTINGS MODAL ─── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeSettingsOutside(event)">
+  <div class="modal">
+    <div class="modal-title">🔑 Clé API Groq — Gratuite</div>
+    <div class="modal-sub">
+      Utilise <strong>Llama 3.3 70B</strong> + recherche DuckDuckGo intégrée.<br>
+      Gratuit · Pas de carte bancaire · Ultra rapide.<br><br>
+      1. Va sur <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pink)">console.groq.com/keys</a><br>
+      2. Clique <strong>"Create API key"</strong><br>
+      3. Colle la clé ici 👇
+    </div>
+    <label>Clé API Groq (commence par <code style="color:#aaa">gsk_</code>)</label>
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <input type="password" id="api-key-input" placeholder="gsk_…" style="flex:1">
+      <button onclick="toggleKeyVisibility()" style="background:#222;border:1px solid #333;border-radius:8px;color:#888;padding:0 12px;cursor:pointer;font-size:14px" id="eye-btn">👁</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-save" onclick="saveApiKey()">Enregistrer</button>
+      <button class="btn-modal-cancel" onclick="closeSettings()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CANDIDATES MODAL ─── -->
+<div class="modal-overlay" id="candidates-overlay" onclick="closeCandidatesOutside(event)">
+  <div class="modal" style="width:560px">
+    <div class="modal-title">📍 Plusieurs établissements trouvés</div>
+    <div class="modal-sub">Sélectionne le bon — l'IA fera ensuite une recherche détaillée dessus.</div>
+    <div id="candidates-list" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeCandidates()" style="flex:1">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ─── STEP 1 : PARTENAIRE ─── -->
+  <div class="step-card active open" id="step1">
+    <div class="step-head" onclick="toggleStep('step1')">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">Partenaire</div>
+        <div class="step-subtitle">Tape juste le nom → l'IA cherche le reste</div>
+      </div>
+      <div class="step-chevron">▾</div>
+    </div>
+    <div class="step-body">
+      <div class="research-result-banner" id="research-ok"></div>
+      <div class="research-error-banner" id="research-err"></div>
+
+      <div class="search-row">
+        <input type="text" id="partner-name" placeholder="Nom du partenaire (ex: Crousty Game, Bellini, Rush Action…)" oninput="onPartnerInput()" onkeydown="if(event.key==='Enter') searchPartner()">
+        <button class="btn-search" id="btn-search" onclick="searchPartner()">
+          <div class="spin-sm"></div>
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Rechercher avec IA
+        </button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Catégorie</label>
+          <select id="partner-cat">
+            <option value="restaurant">🍽️ Restaurant</option>
+            <option value="bar">🍺 Bar / Pub</option>
+            <option value="cafe">☕ Café</option>
+            <option value="boutique">🛍️ Boutique</option>
+            <option value="sport">🏋️ Sport / Fitness</option>
+            <option value="loisir">🎮 Loisir / Activité</option>
+            <option value="beaute">💅 Beauté / Bien-être</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ville</label>
+          <input type="text" id="partner-city" placeholder="ex: Toulouse, Bordeaux, Nantes…">
+        </div>
+        <div class="form-group">
+          <label>Adresse / Quartier</label>
+          <input type="text" id="partner-address" placeholder="ex: Place du Capitole, centre-ville…">
+        </div>
+      </div>
+
+      <div class="form-group full" style="margin-bottom:14px">
+        <label>Ce qui rend ce partenaire unique</label>
+        <textarea id="partner-unique" placeholder="Son concept original, sa spécialité, son ambiance, ce que les -26 ans adorent… (se souvenir : le concept = le hook)"></textarea>
+        <div class="hint">💡 Le format qui explose = Hook par concept original (ex: "pizzeria avec la plus belle vue", "calzone frites qu'on trouve nulle part ailleurs")</div>
+      </div>
+
+      <div class="form-group full">
+        <label>Quelques infos supplémentaires (facultatif)</label>
+        <textarea id="partner-extra" placeholder="Prix, spécialités à mentionner, ambiance, type de clientèle, anecdote…" style="min-height:60px"></textarea>
+      </div>
+
+      <button class="btn-generate" onclick="goToStep(2)" style="margin-top:14px; background: linear-gradient(135deg,#333,#222); font-size:13px; padding:11px">
+        Suivant : Ajouter les offres →
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 2 : OFFRES ─── -->
+  <div class="step-card" id="step2">
+    <div class="step-head" onclick="toggleStep('step2')">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">Offres Klub</div>
+        <div class="step-subtitle">Offre unique (1×/an) + offre permanente</div>
+      </div>
+      <div class="step-chevron">▾</div>
+    </div>
+    <div class="step-body">
+
+      <div class="offer-block unique">
+        <div class="offer-type-label">🔴 Offre Unique — 1 fois par an</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ce que le membre reçoit</label>
+            <input type="text" id="offer-unique-what" placeholder="ex: 1 pizza achetée = 1 pizza offerte">
+          </div>
+          <div class="form-group">
+            <label>Conditions (facultatif)</label>
+            <input type="text" id="offer-unique-cond" placeholder="ex: à partir de 2 personnes, dîner uniquement…">
+          </div>
+        </div>
+      </div>
+
+      <div class="offer-block permanente">
+        <div class="offer-type-label">🟢 Offre Permanente — illimitée toute l'année</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ce que le membre reçoit</label>
+            <input type="text" id="offer-perm-what" placeholder="ex: 1 pinte achetée = 1 pinte offerte de 20h à 22h">
+          </div>
+          <div class="form-group">
+            <label>Conditions (facultatif)</label>
+            <input type="text" id="offer-perm-cond" placeholder="ex: happy hour, hors week-end…">
+          </div>
+        </div>
+      </div>
+
+      <div class="hint" style="margin-top:4px">💡 Le script place toujours les offres en fin de vidéo, juste avant le CTA. Elles doivent sonner comme un bonus, pas comme une pub.</div>
+
+      <button class="btn-generate" onclick="goToStep(3)" style="margin-top:14px; background: linear-gradient(135deg,#333,#222); font-size:13px; padding:11px">
+        Suivant : Paramètres du script →
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── STEP 3 : PARAMÈTRES ─── -->
+  <div class="step-card" id="step3">
+    <div class="step-head" onclick="toggleStep('step3')">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Paramètres</div>
+        <div class="step-subtitle">Durée, ton, format de tournage</div>
+      </div>
+      <div class="step-chevron">▾</div>
+    </div>
+    <div class="step-body">
+
+      <label style="margin-bottom:8px;display:block">Durée cible</label>
+      <div class="pill-row" id="pills-duration">
+        <div class="pill" onclick="selectPill('duration','15s',this)">15 sec</div>
+        <div class="pill selected" onclick="selectPill('duration','30s',this)">30 sec</div>
+        <div class="pill" onclick="selectPill('duration','45s',this)">45 sec</div>
+        <div class="pill" onclick="selectPill('duration','60s',this)">60 sec</div>
+      </div>
+      <div class="hint" style="margin-bottom:16px">15s = ~70 mots · 30s = ~140 mots · 45s = ~200 mots · 60s = ~260 mots</div>
+
+      <label style="margin-bottom:8px;display:block">Ton à employer</label>
+      <div class="pill-row" id="pills-tone">
+        <div class="pill selected" onclick="selectPill('tone','casual',this)">😎 Casual / Amical</div>
+        <div class="pill" onclick="selectPill('tone','enthousiaste',this)">🔥 Enthousiaste</div>
+        <div class="pill" onclick="selectPill('tone','narratif',this)">📖 Narratif / Storytelling</div>
+        <div class="pill" onclick="selectPill('tone','concept',this)">💡 Concept-first</div>
+      </div>
+      <div class="hint" style="margin-bottom:16px">
+        <b style="color:#aaa">Casual</b> : "on s'est arrêté là et on n'a rien regretté" —
+        <b style="color:#aaa">Enthousiaste</b> : "vraiment celui-là c'est n'importe quoi" —
+        <b style="color:#aaa">Narratif</b> : raconte une histoire / anecdote —
+        <b style="color:#aaa">Concept-first</b> : démarre sur la spécificité unique
+      </div>
+
+      <label style="margin-bottom:8px;display:block">Format de tournage</label>
+      <div class="pill-row" id="pills-format">
+        <div class="pill selected" onclick="selectPill('format','voixoff',this)">🎙️ Voix off</div>
+        <div class="pill" onclick="selectPill('format','facecam',this)">📱 Face cam</div>
+        <div class="pill" onclick="selectPill('format','mt',this)">🎤 Micro-trottoir</div>
+      </div>
+      <div class="hint" style="margin-bottom:0">
+        <b style="color:#aaa">Voix off</b> : script lu en narration sur images B-roll —
+        <b style="color:#aaa">Face cam</b> : parle direct caméra, style authentique —
+        <b style="color:#aaa">Micro-trottoir</b> : interviews clients dans le lieu
+      </div>
+
+      <div class="hint" style="margin-top:20px; margin-bottom:8px; color:#888">
+        🎯 Le hook est généré automatiquement dans le style des vraies vidéos Klub. Le nom du partenaire n'est jamais cité.
+      </div>
+      <button class="btn-generate" id="btn-gen" onclick="generateScript()">
+        <svg class="gen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div class="gen-spin" style="display:none;width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite"></div>
+        <span class="gen-label">Générer le script</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── OUTPUT ─── -->
+  <div id="output-section">
+    <div class="step-card" style="border-color:#3a2030">
+      <div class="step-head" style="cursor:default">
+        <div class="step-num" style="background:var(--pink-dim);border-color:var(--pink);color:var(--pink)">✓</div>
+        <div>
+          <div class="step-title">Script généré</div>
+          <div class="step-subtitle" id="script-meta-label">—</div>
+        </div>
+      </div>
+      <div style="padding: 0 20px 20px">
+
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-view-structured" onclick="setView('structured')">Structuré</button>
+          <button class="view-btn" id="btn-view-plain" onclick="setView('plain')">Texte brut</button>
+        </div>
+
+        <div class="script-card">
+          <div class="script-top">
+            <div class="script-meta" id="script-badges"></div>
+            <div class="script-actions">
+              <button class="btn-copy" id="btn-copy" onclick="copyScript()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copier
+              </button>
+              <button class="btn-copy" id="btn-save" onclick="saveScript()" style="border-color:var(--green);color:var(--green)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Enregistrer
+              </button>
+            </div>
+          </div>
+          <div class="script-body" id="script-structured"></div>
+          <div class="script-plain" id="script-plain"></div>
+        </div>
+
+        <div id="wc-bar" class="wc-bar">
+          <div class="wc-label">Mots</div>
+          <div class="wc-val" id="wc-val">0</div>
+          <div class="wc-target" id="wc-target">/ ~140</div>
+          <div class="wc-bar-fill-wrap"><div class="wc-bar-fill" id="wc-fill" style="width:0%"></div></div>
+        </div>
+
+        <button class="btn-generate" onclick="resetAll()" style="margin-top:14px; background: linear-gradient(135deg,#333,#222); font-size:13px; padding:11px">
+          ↺ Nouveau script
+        </button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Base API.
+// - Déployé (Render, etc.) : même origine que la page → ''
+// - Local : page sur 8744 → '' ; sinon (preview/8743) → localhost:8744
+const _isLocal = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+const API_BASE = _isLocal
+  ? (location.port === '8744' ? '' : 'http://localhost:8744')
+  : '';
+
+// ─── STATE ───
+const state = {
+  duration: '30s',
+  tone: 'casual',
+  format: 'voixoff',
+  selectedHooks: new Set()
+};
+
+// ─── HOOKS DATA ───
+const HOOKS = [
+  {
+    id: 'h1',
+    title: 'Concept unique introuvable ailleurs',
+    example: '"C\'est le truc qu\'on trouve quasiment nulle part, les panzeeroti. Des mini calzone frites à déguster sur le pouce."',
+    ref: 'Casa di Tursi — Toulouse',
+    perf: null,
+    cat: ['restaurant','cafe'],
+    tip: 'Démarre sur l\'originalité du produit/concept avant même de nommer le lieu'
+  },
+  {
+    id: 'h2',
+    title: 'Offre directe en ouverture',
+    example: '"Ton taco c\'est offert Place Saint-Pierre à Toulouse avec Klub, on te montre comment."',
+    ref: 'Tacos Avenue — Toulouse',
+    perf: null,
+    cat: ['restaurant','bar','cafe'],
+    tip: 'L\'offre Klub comme hook direct — fort pour convertir, mais moins viral'
+  },
+  {
+    id: 'h3',
+    title: 'L\'activité dont personne n\'a encore entendu parler',
+    example: '"Une activité dont t\'as pas encore entendu parler à Toulouse, prépare-toi à faire travailler ta force, ta précision et ton cerveau."',
+    ref: 'Rush Action Game — Toulouse',
+    perf: null,
+    cat: ['loisir','sport'],
+    tip: 'Fort pour les activités récentes / peu connues. Crée de la curiosité immédiate'
+  },
+  {
+    id: 'h4',
+    title: 'Le concept qui fait le tour des réseaux',
+    example: '"C\'est le concept qui fait le tour des réseaux en ce moment et ça vient de débarquer à deux pas du Capitole."',
+    ref: 'Crousty Game — Toulouse',
+    perf: null,
+    cat: ['restaurant','loisir','boutique'],
+    tip: 'Social proof + FOMO. Marche si le concept est réellement en vogue'
+  },
+  {
+    id: 'h5',
+    title: 'On s\'est arrêté là et on n\'a rien regretté',
+    example: '"On s\'est arrêté là quand le soleil a enfin décidé de revenir, et on n\'a rien regretté."',
+    ref: 'Le Bellini — Toulouse',
+    perf: null,
+    cat: ['restaurant','cafe','bar'],
+    tip: 'Ton narratif / découverte. Crée de la confiance et de l\'authenticité'
+  },
+  {
+    id: 'h6',
+    title: 'Le spot parfait pour [situation]',
+    example: '"C\'est le spot parfait pour s\'installer tranquille avec des potes et se laisser embarquer par l\'énergie du lieu."',
+    ref: 'Black Lion — Toulouse',
+    perf: null,
+    cat: ['bar','cafe','restaurant'],
+    tip: 'Parle directement à l\'usage / occasion. Fort pour créer de l\'identification'
+  },
+  {
+    id: 'h7',
+    title: 'Superlatif géo — le meilleur / le seul à [ville]',
+    example: '"Sans doute la pizzeria avec la plus belle vue de Toulouse."',
+    ref: 'Le Bellini (variation)',
+    perf: '🏆 574K vues réseau',
+    cat: ['restaurant','bar','cafe','boutique'],
+    tip: 'Hook court et fort. Fonctionne si le claim est crédible et vérifiable visuellement'
+  },
+  {
+    id: 'h8',
+    title: 'Description sensorielle en ouverture',
+    example: '"Des frites dorées, une sauce secrète maison… et ça dégouline juste comme il faut."',
+    ref: 'Nantes top videos — 515K vues',
+    perf: '⭐ 515K vues',
+    cat: ['restaurant','cafe'],
+    tip: 'Démarre sur le visuel/sensoriel avant d\'expliquer le lieu. Fort pour la nourriture'
+  },
+  {
+    id: 'h9',
+    title: 'Interpellation directe "tu / vous"',
+    example: '"T\'as déjà mangé quelque chose d\'aussi généreux pour 10 balles à Toulouse ?"',
+    ref: 'Pattern récurrent réseau Klub',
+    perf: null,
+    cat: ['restaurant','bar','boutique','sport','loisir','beaute'],
+    tip: 'Universel. L\'interpellation directe accroche l\'attention dès les premiers mots'
+  },
+  {
+    id: 'h10',
+    title: 'Révélation progressive — "mais qu\'est-ce que c\'est ?"',
+    example: '"C\'est à ce moment-là que tu te demandes — mais qu\'est-ce que c\'est qu\'un panzeeroti ?"',
+    ref: 'Casa di Tursi — Toulouse',
+    perf: null,
+    cat: ['restaurant','loisir','boutique'],
+    tip: 'Crée du suspense / curiosité. Fonctionne si le produit a un nom ou concept inhabituel'
+  }
+];
+
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded', () => {
+  refreshApiStatus();
+  refreshLibraryCount();
+});
+
+// ─── SAUVEGARDE / BIBLIOTHÈQUE ───
+const LIB_KEY = 'klub_saved_scripts';
+
+function getLibrary() {
+  try { return JSON.parse(localStorage.getItem(LIB_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function setLibrary(arr) {
+  localStorage.setItem(LIB_KEY, JSON.stringify(arr));
+  refreshLibraryCount();
+}
+function refreshLibraryCount() {
+  const n = getLibrary().length;
+  const el = document.getElementById('lib-count');
+  if (!el) return;
+  el.textContent = n;
+  el.style.display = n > 0 ? 'inline-block' : 'none';
+}
+
+function saveScript() {
+  // sync segments depuis le DOM éditable
+  const segs = (window._scriptSegments || []).map(s => ({ ...s }));
+  if (!segs.length) return;
+  const meta = window._scriptMeta || {};
+  const d = new Date();
+  const stamp = d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+
+  const lib = getLibrary();
+  lib.unshift({
+    id: 'scr_' + Date.now(),
+    name: meta.name || 'Script sans nom',
+    city: meta.city || '',
+    cat: meta.cat || '',
+    duration: meta.duration || '',
+    tone: meta.tone || '',
+    target: window._scriptTarget || 170,
+    segments: segs,
+    savedAt: stamp
+  });
+  setLibrary(lib);
+
+  const btn = document.getElementById('btn-save');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '✓ Enregistré';
+  btn.style.background = 'var(--green-dim)';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1800);
+}
+
+function openLibrary() {
+  renderLibrary();
+  document.getElementById('library-overlay').classList.add('open');
+}
+function closeLibrary() { document.getElementById('library-overlay').classList.remove('open'); }
+function closeLibraryOutside(e) { if (e.target === document.getElementById('library-overlay')) closeLibrary(); }
+
+function renderLibrary() {
+  const lib = getLibrary();
+  const list = document.getElementById('library-list');
+  if (!lib.length) {
+    list.innerHTML = '<div class="lib-empty">Aucun script enregistré pour le moment.</div>';
+    return;
+  }
+  list.innerHTML = lib.map((s, i) => `
+    <div class="lib-card">
+      <div class="lib-main" onclick="loadSavedScript(${i})">
+        <div class="lib-name">${esc(s.name)}</div>
+        <div class="lib-meta">
+          ${s.city ? esc(s.city) : '—'}<span class="lib-dot">·</span>${esc(s.cat||'?')}<span class="lib-dot">·</span>${esc(s.duration||'')}<span class="lib-dot">·</span>${esc(s.savedAt||'')}
+        </div>
+      </div>
+      <button class="lib-del" onclick="deleteSavedScript(${i}, event)">🗑</button>
+    </div>
+  `).join('');
+}
+
+function loadSavedScript(i) {
+  const lib = getLibrary();
+  const s = lib[i];
+  if (!s) return;
+  const meta = { name: s.name, cat: s.cat, city: s.city, duration: s.duration, tone: s.tone,
+                 target: s.target, offerUW:'', offerPW:'' };
+  closeLibrary();
+  renderOutput(s.segments.map(x => ({...x})), meta);
+  document.getElementById('output-section').style.display = 'block';
+  setTimeout(() => document.getElementById('output-section').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function deleteSavedScript(i, e) {
+  if (e) e.stopPropagation();
+  const lib = getLibrary();
+  lib.splice(i, 1);
+  setLibrary(lib);
+  renderLibrary();
+}
+
+function renderHooks() {
+  const container = document.getElementById('hooks-list');
+  if (!container) return;
+  container.innerHTML = HOOKS.map(h => `
+    <div class="hook-card" id="hook-${h.id}" onclick="toggleHook('${h.id}')">
+      <div class="hook-check">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="hook-text">
+        <div class="hook-title">${h.title}</div>
+        <div class="hook-example">${h.example}</div>
+        <div class="hook-ref">${h.ref}</div>
+      </div>
+      ${h.perf ? `<div class="hook-perf">${h.perf}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function toggleHook(id) {
+  const el = document.getElementById('hook-' + id);
+  if (state.selectedHooks.has(id)) {
+    state.selectedHooks.delete(id);
+    el.classList.remove('selected');
+  } else {
+    state.selectedHooks.add(id);
+    el.classList.add('selected');
+  }
+}
+
+// ─── PILLS ───
+function selectPill(group, value, el) {
+  state[group] = value;
+  const row = document.getElementById('pills-' + group);
+  row.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ─── STEP NAV ───
+function toggleStep(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+function goToStep(n) {
+  // Mark previous as done
+  const prev = document.getElementById('step' + (n-1));
+  if (prev) {
+    prev.classList.remove('active','open');
+    prev.classList.add('done');
+    // update num to checkmark
+    const num = prev.querySelector('.step-num');
+    num.textContent = '✓';
+  }
+  // Open target
+  const target = document.getElementById('step' + n);
+  if (target) {
+    target.classList.add('active','open');
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// ─── SETTINGS ───
+function refreshApiStatus() {
+  const key = localStorage.getItem('anthropic_api_key') || '';
+  const el = document.getElementById('api-status');
+  if (key && key.length > 20) {
+    el.className = 'api-key-status ok';
+    el.textContent = '✓ Clé API';
+  } else {
+    el.className = 'api-key-status missing';
+    el.textContent = '⚠ Clé API';
+  }
+}
+
+function openSettings() {
+  document.getElementById('api-key-input').value = localStorage.getItem('anthropic_api_key') || '';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('api-key-input').focus(), 100);
+}
+
+function closeSettings() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function closeSettingsOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeSettings();
+}
+
+function toggleKeyVisibility() {
+  const inp = document.getElementById('api-key-input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (key) localStorage.setItem('anthropic_api_key', key);
+  else localStorage.removeItem('anthropic_api_key');
+  closeSettings();
+  refreshApiStatus();
+}
+
+// ─── SEARCH PARTNER (IA) ───
+function getApiKey() { return localStorage.getItem('anthropic_api_key') || ''; }
+
+function setSearchLoading(on) {
+  const btn = document.getElementById('btn-search');
+  btn.classList.toggle('loading', on);
+}
+
+function clearBanners() {
+  document.getElementById('research-ok').classList.remove('show');
+  document.getElementById('research-err').classList.remove('show');
+}
+
+function showErr(msg) {
+  const el = document.getElementById('research-err');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('show');
+}
+
+// ── ÉTAPE 1 : chercher les candidats par nom seul ──
+async function searchPartner() {
+  const name = document.getElementById('partner-name').value.trim();
+  if (!name) { document.getElementById('partner-name').focus(); return; }
+
+  const api_key = getApiKey();  // peut être vide → le serveur utilise sa clé env si dispo
+
+  setSearchLoading(true);
+  clearBanners();
+
+  try {
+    const res = await fetch(API_BASE + '/api/candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ partner: name, api_key })
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      if (/cl[ée] api/i.test(data.error)) openSettings();
+      showErr(data.error);
+      return;
+    }
+
+    const cands = data.candidates || [];
+
+    if (cands.length === 0) {
+      // Rien trouvé en candidat — tente recherche directe sur le nom seul
+      await doResearch(name, '');
+    } else if (cands.length === 1) {
+      const c = cands[0];
+      await doResearch(c.name || name, c.city || '');
+    } else {
+      showCandidates(cands);  // popup de sélection
+    }
+  } catch (e) {
+    showErr('Serveur indisponible — relance avec python3 research_server.py');
+  } finally {
+    setSearchLoading(false);
+  }
+}
+
+// ── POPUP candidats ──
+function showCandidates(cands) {
+  const list = document.getElementById('candidates-list');
+  list.innerHTML = cands.map((c, i) => `
+    <div class="cand-card" onclick='pickCandidate(${i})'>
+      <div class="cand-name">${esc(c.name || '?')}${c.city ? ` <span class="cand-city">· ${esc(c.city)}</span>` : ''}</div>
+      ${c.address ? `<div class="cand-addr">📍 ${esc(c.address)}</div>` : ''}
+      ${c.hint ? `<div class="cand-hint">${esc(c.hint)}</div>` : ''}
+    </div>
+  `).join('');
+  window._candidates = cands;
+  document.getElementById('candidates-overlay').classList.add('open');
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+async function pickCandidate(i) {
+  const c = (window._candidates || [])[i];
+  closeCandidates();
+  if (!c) return;
+  // pré-remplit le champ nom + ville avec le candidat choisi
+  document.getElementById('partner-name').value = c.name || document.getElementById('partner-name').value;
+  if (c.city) document.getElementById('partner-city').value = c.city;
+  setSearchLoading(true);
+  clearBanners();
+  try {
+    await doResearch(c.name, c.city || '');
+  } finally {
+    setSearchLoading(false);
+  }
+}
+
+function closeCandidates() {
+  document.getElementById('candidates-overlay').classList.remove('open');
+}
+function closeCandidatesOutside(e) {
+  if (e.target === document.getElementById('candidates-overlay')) closeCandidates();
+}
+
+// ── ÉTAPE 2 : recherche détaillée sur l'établissement choisi ──
+async function doResearch(name, city) {
+  const api_key = getApiKey();
+  clearBanners();
+  const res = await fetch(API_BASE + '/api/research', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ partner: name, city, api_key })
+  });
+  const data = await res.json();
+
+  if (data.error) { showErr(data.error); return; }
+
+  prefillFields(data);
+  const SKIP = ['_source'];
+  const filled = Object.entries(data).filter(([k,v]) => !SKIP.includes(k) && v && v !== null).length;
+  const srcMap = {'web+groq':'🌐 web + Groq','groq':'🧠 Groq (mémoire IA)'};
+  const src = srcMap[data._source] || '🧠 Groq';
+
+  if (filled === 0) {
+    showErr('Aucune info exploitable trouvée. Remplis manuellement.');
+  } else {
+    const ok = document.getElementById('research-ok');
+    ok.innerHTML = `✅ <strong>${filled} champ${filled>1?'s':''} rempli${filled>1?'s':''}</strong> via ${src}. Vérifie et complète si besoin.`;
+    ok.classList.add('show');
+  }
+}
+
+function flash(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.transition = 'border-color 0.2s';
+  el.style.borderColor = 'var(--green)';
+  setTimeout(() => { el.style.borderColor = ''; }, 1800);
+}
+
+function prefillFields(data) {
+  console.log('[prefill] data reçue :', data);
+
+  // Catégorie
+  if (data.category) {
+    const sel = document.getElementById('partner-cat');
+    const opts = ['restaurant','bar','cafe','boutique','sport','loisir','beaute'];
+    const cat = data.category.toLowerCase().trim();
+    if (opts.includes(cat)) { sel.value = cat; flash('partner-cat'); }
+  }
+
+  // Adresse — toujours écraser
+  const addr = [data.address, data.quartier].filter(Boolean).join(' — ');
+  if (addr) {
+    document.getElementById('partner-address').value = addr;
+    flash('partner-address');
+  }
+
+  // Ce qui le rend unique — toujours écraser
+  if (data.unique) {
+    document.getElementById('partner-unique').value = data.unique;
+    flash('partner-unique');
+  }
+
+  // Infos supplémentaires — toujours écraser
+  const extraParts = [
+    data.specialties ? '🍽 ' + data.specialties : null,
+    data.ambiance    ? '🎭 ' + data.ambiance    : null,
+    data.price       ? '💶 ' + data.price       : null,
+    data.extra       ? data.extra               : null
+  ].filter(Boolean);
+
+  if (extraParts.length) {
+    document.getElementById('partner-extra').value = extraParts.join('\n');
+    flash('partner-extra');
+  }
+}
+
+function onPartnerInput() { /* intentionally empty */ }
+
+// ─── SCRIPT GENERATION ───
+function setGenLoading(on) {
+  const btn = document.getElementById('btn-gen');
+  btn.disabled = on;
+  btn.querySelector('.gen-icon').style.display  = on ? 'none'  : 'block';
+  btn.querySelector('.gen-spin').style.display  = on ? 'block' : 'none';
+  btn.querySelector('.gen-label').textContent   = on ? 'Génération en cours…' : 'Générer le script';
+}
+
+function segType(label) {
+  const lbl = (label || '').toLowerCase();
+  if (lbl.includes('hook')) return 'hook';
+  if (lbl.includes('offre')) return 'offer';
+  if (lbl.includes('cta') || lbl.includes('call')) return 'cta';
+  if (lbl.includes('concept') || lbl.includes('découv') || lbl.includes('lieu') || lbl.includes('contexte')) return 'context';
+  return 'product';
+}
+
+// Insère le paragraphe vide "produits filmés" juste avant l'offre (ou avant le CTA)
+function insertShootSegment(segs) {
+  const placeholder = {
+    type: 'shoot',
+    label: '🎬 Produits filmés — à compléter après le tournage',
+    text: '',
+    placeholder: true
+  };
+  let idx = segs.findIndex(s => s.type === 'offer');
+  if (idx === -1) idx = segs.findIndex(s => s.type === 'cta');
+  if (idx === -1) idx = segs.length;
+  segs.splice(idx, 0, placeholder);
+  return segs;
+}
+
+// Mappe les segments du serveur (label+text) → type + timecode + paragraphe vide
+function enrichSegments(rawSegs) {
+  let segs = rawSegs.map(s => ({ type: segType(s.label), label: s.label || '', text: s.text || '' }));
+  segs = insertShootSegment(segs);
+  return recomputeTimes(segs);
+}
+
+function recomputeTimes(segs) {
+  const WPS = 4.5;
+  let t = 0;
+  segs.forEach(s => {
+    s.time = Math.round(t) + 's';
+    const words = (s.text || '').split(/\s+/).filter(Boolean).length;
+    t += words / WPS;
+  });
+  return segs;
+}
+
+async function generateScript() {
+  const name      = document.getElementById('partner-name').value.trim() || 'ce partenaire';
+  const cat       = document.getElementById('partner-cat').value;
+  const city      = document.getElementById('partner-city').value.trim() || 'ta ville';
+  const address   = document.getElementById('partner-address').value.trim();
+  const unique    = document.getElementById('partner-unique').value.trim();
+  const extra     = document.getElementById('partner-extra').value.trim();
+  const offerUW   = document.getElementById('offer-unique-what').value.trim();
+  const offerUC   = document.getElementById('offer-unique-cond').value.trim();
+  const offerPW   = document.getElementById('offer-perm-what').value.trim();
+  const offerPC   = document.getElementById('offer-perm-cond').value.trim();
+
+  const duration  = state.duration;
+  const tone      = state.tone;
+  const format    = state.format;
+  const wordTargets = { '15s': 70, '30s': 140, '45s': 200, '60s': 260 };
+  const target = wordTargets[duration];
+  const meta = { name, cat, city, duration, tone, format, target, offerUW, offerPW };
+
+  setGenLoading(true);
+  let segments = null;
+
+  const api_key = getApiKey();  // peut être vide → serveur utilise sa clé env
+  try {
+    const res = await fetch(API_BASE + '/api/script', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, cat, city, address, unique, extra,
+                             offerUW, offerUC, offerPW, offerPC,
+                             duration, tone, format, api_key })
+    });
+    const data = await res.json();
+    if (data.segments && data.segments.length) {
+      segments = enrichSegments(data.segments);
+    }
+  } catch (e) { /* fallback templates ci-dessous */ }
+
+  // Fallback templates JS si serveur/IA indispo
+  if (!segments) {
+    segments = buildScript({ name, cat, city, address, unique, extra,
+                             offerUW, offerUC, offerPW, offerPC,
+                             duration, tone, format, selectedHookObjs: [], target });
+  }
+
+  renderOutput(segments, meta);
+  setGenLoading(false);
+
+  document.getElementById('output-section').style.display = 'block';
+  setTimeout(() => document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function buildScript({ name, cat, city, address, unique, extra, offerUW, offerUC, offerPW, offerPC, duration, tone, format, selectedHookObjs, target }) {
+
+  const cityRef = city || 'ta ville';
+  const addrRef = address ? ` (${address})` : '';
+  const nameDisplay = name || 'ce spot';
+
+  // ── HOOK ──────────────────────────────────────────────────────
+  let hookText = '';
+
+  const primaryHook = selectedHookObjs[0];
+
+  if (primaryHook) {
+    switch (primaryHook.id) {
+      case 'h1': // Concept unique
+        hookText = unique
+          ? `${unique.charAt(0).toUpperCase() + unique.slice(1)}. ${tone === 'enthousiaste' ? 'Et crois-moi, tu n\'as jamais vu ça à ' + cityRef + '.' : 'Impossible à trouver ailleurs à ' + cityRef + '.'}`
+          : `Il y a un truc qu'on trouve quasiment nulle part à ${cityRef} — et c'est chez ${nameDisplay}.`;
+        break;
+      case 'h2': // Offre directe
+        hookText = offerUW
+          ? `${offerUW} — chez ${nameDisplay} à ${cityRef} avec Klub, on te montre comment.`
+          : `Le meilleur plan de ${cityRef} en ce moment, c'est chez ${nameDisplay} avec Klub.`;
+        break;
+      case 'h3': // Activité inconnue
+        hookText = `Une ${catLabel(cat)} dont t'as pas encore entendu parler à ${cityRef}${addrRef}.`;
+        break;
+      case 'h4': // Tour des réseaux
+        hookText = `C'est le concept qui fait le tour des réseaux en ce moment, et ça vient de débarquer à ${cityRef}.`;
+        break;
+      case 'h5': // On s'est arrêté là
+        hookText = `On s'est arrêté là et on n'a rien regretté. Bienvenue chez ${nameDisplay}${addrRef}.`;
+        break;
+      case 'h6': // Spot parfait
+        hookText = `C'est le spot parfait ${contextLine(cat)} à ${cityRef}${addrRef}.`;
+        break;
+      case 'h7': // Superlatif géo
+        hookText = `Sans doute ${superlatif(cat, unique)} de ${cityRef}${addrRef}.`;
+        break;
+      case 'h8': // Sensoriel
+        hookText = unique
+          ? `${sensoryOpener(unique, cat)}`
+          : `Ce qui t'attend chez ${nameDisplay}, c'est du lourd.`;
+        break;
+      case 'h9': // Interpellation
+        hookText = `T'as déjà ${interpellation(cat, unique, city)} ? Ça se passe chez ${nameDisplay}${addrRef}.`;
+        break;
+      case 'h10': // Révélation progressive
+        hookText = unique
+          ? `${nameDisplay}, ça te dit peut-être quelque chose. Mais ce que tu ne sais pas encore, c'est ${unique.toLowerCase()}.`
+          : `${nameDisplay} vient d'ouvrir à ${cityRef}. Mais ce que tu ne sais pas encore, ça change tout.`;
+        break;
+      default:
+        hookText = `Bienvenue chez ${nameDisplay}${addrRef}.`;
+    }
+  } else {
+    // Default hook based on tone
+    switch (tone) {
+      case 'casual':
+        hookText = address
+          ? `On vous emmène chez ${nameDisplay}, ${address} à ${cityRef}.`
+          : `Nouveau bon plan à ${cityRef} — ${nameDisplay}, et c'est du lourd.`;
+        break;
+      case 'enthousiaste':
+        hookText = `${nameDisplay} à ${cityRef} — honnêtement, on ne s'attendait pas à ça.`;
+        break;
+      case 'narratif':
+        hookText = `On cherchait un spot${address ? ' ' + address : ''} à ${cityRef}. On n'a pas cherché longtemps.`;
+        break;
+      case 'concept':
+        hookText = unique
+          ? `${unique.charAt(0).toUpperCase() + unique.slice(1)} — voilà ce qui t'attend chez ${nameDisplay}.`
+          : `${nameDisplay}, c'est pas juste un ${catLabel(cat)}. C'est une expérience.`;
+        break;
+    }
+  }
+
+  // ── CONTEXT ──────────────────────────────────────────────────
+  let contextText = '';
+  if (address) {
+    contextText = `Ça se passe ${address}, `;
+  } else {
+    contextText = `C'est à ${cityRef} `;
+  }
+  contextText += buildContextLine(cat, tone, name);
+
+  // ── PRODUCT / EXPÉRIENCE ──────────────────────────────────────
+  let productText = '';
+  if (unique) {
+    productText = buildProductLine(unique, extra, cat, tone, name, target);
+  } else if (extra) {
+    productText = buildProductLine(extra, '', cat, tone, name, target);
+  } else {
+    productText = buildProductLine('', '', cat, tone, name, target);
+  }
+
+  // ── OFFRE ─────────────────────────────────────────────────────
+  let offerText = '';
+  const offerParts = [];
+
+  if (offerUW) {
+    const cond = offerUC ? ` (${offerUC})` : '';
+    offerParts.push(`une fois par an : ${offerUW}${cond}`);
+  }
+  if (offerPW) {
+    const cond = offerPC ? ` (${offerPC})` : '';
+    offerParts.push(`en permanence : ${offerPW}${cond}`);
+  }
+
+  if (offerParts.length === 2) {
+    offerText = `Et comme Klub ça se mérite — avec ton pass, t'as ${offerParts[0]}. Et ${offerParts[1]}.`;
+  } else if (offerParts.length === 1) {
+    offerText = `Avec ton pass Klub, ${offerParts[0]}.`;
+  } else {
+    offerText = `Avec ton pass Klub, des avantages exclusifs chez ${name} toute l'année.`;
+  }
+
+  // ── CTA ──────────────────────────────────────────────────────
+  const ctas = {
+    casual: ['Allez, on se voit là-bas.', 'Bonne journée.', 'Allez, bonne visite !'],
+    enthousiaste: ['On se voit là-bas, comptez sur nous.', 'Allez, go !', 'Allez, n\'hésitez plus !'],
+    narratif: ['La suite, c\'est vous qui l\'écrivez.', 'À vous de jouer.', 'Allez, on se voit là-bas.'],
+    concept: ['Allez, bisous l\'équipe.', 'Testez et revenez nous dire.', 'À bientôt chez ' + nameDisplay + '.']
+  };
+  const ctaList = ctas[tone] || ctas.casual;
+  const ctaText = ctaList[Math.floor(Math.random() * ctaList.length)];
+
+  // ── ASSEMBLE WITH TIMING ──────────────────────────────────────
+  const WPS = 4.5; // words per second average
+  let t = 0;
+
+  function ts(text) {
+    const words = text.split(/\s+/).filter(Boolean).length;
+    const start = t;
+    t += words / WPS;
+    return { start: Math.round(start), words };
+  }
+
+  const hookTs = ts(hookText);
+  const contextTs = ts(contextText);
+  const productTs = ts(productText);
+  const offerTs = ts(offerText);
+  const ctaTs = ts(ctaText);
+
+  // For short videos, skip context or merge
+  const segments = [];
+
+  if (duration === '15s' || duration === '30s') {
+    // Compress: hook + product merged, then offer, cta
+    const merged = hookText + ' ' + (unique || extra ? productText : '');
+    segments.push({ type: 'hook',    time: '0s', label: '🪝 Hook', text: hookText });
+    if (duration === '30s' && unique) {
+      segments.push({ type: 'product', time: fmt(hookTs.start + hookTs.words/WPS), label: '⭐ Concept / Produit', text: productText });
+    }
+    segments.push({ type: 'offer',   time: fmt(productTs.start + productTs.words/WPS), label: '🎁 Offre Klub', text: offerText });
+    segments.push({ type: 'cta',     time: fmt(offerTs.start + offerTs.words/WPS),   label: '📣 Call to action', text: ctaText });
+  } else {
+    segments.push({ type: 'hook',    time: '0s',                                    label: '🪝 Hook',               text: hookText });
+    segments.push({ type: 'context', time: fmt(hookTs.start + hookTs.words/WPS),    label: '📍 Contexte / Lieu',    text: contextText });
+    segments.push({ type: 'product', time: fmt(contextTs.start + contextTs.words/WPS), label: '⭐ Concept / Produit', text: productText });
+    segments.push({ type: 'offer',   time: fmt(productTs.start + productTs.words/WPS), label: '🎁 Offre Klub',       text: offerText });
+    segments.push({ type: 'cta',     time: fmt(offerTs.start + offerTs.words/WPS),  label: '📣 Call to action',     text: ctaText });
+  }
+
+  return insertShootSegment(segments);
+}
+
+function fmt(s) { return Math.round(s) + 's'; }
+
+// ── COPYWRITING HELPERS ─────────────────────────────────────────
+
+function catLabel(cat) {
+  const m = { restaurant:'restaurant', bar:'bar', cafe:'café', boutique:'boutique', sport:'salle de sport', loisir:'activité', beaute:'institut' };
+  return m[cat] || cat;
+}
+
+function contextLine(cat) {
+  const m = {
+    restaurant: 'pour un déjeuner entre potes ou un dîner qui change',
+    bar: 'pour s\'installer tranquille avec des potes',
+    cafe: 'pour prendre un café comme il faut',
+    boutique: 'pour shopper des pièces uniques',
+    sport: 'pour travailler ton physique autrement',
+    loisir: 'pour vivre quelque chose de nouveau',
+    beaute: 'pour prendre soin de toi'
+  };
+  return m[cat] || 'pour vivre quelque chose de bien';
+}
+
+function superlatif(cat, unique) {
+  if (unique && unique.length > 5) {
+    const words = unique.split(' ');
+    return `le ${catLabel(cat)} avec ${words.slice(0,6).join(' ')}`;
+  }
+  const m = {
+    restaurant: 'la table la plus gourmande', bar: 'le bar avec la meilleure ambiance',
+    cafe: 'le café avec l\'atmosphère la plus unique', boutique: 'la boutique avec les pièces les plus originales',
+    sport: 'l\'expérience sport la plus intense', loisir: 'l\'activité la plus originale', beaute: 'l\'endroit le plus zen'
+  };
+  return m[cat] || 'l\'endroit à ne pas manquer';
+}
+
+function sensoryOpener(unique, cat) {
+  const u = unique.toLowerCase();
+  if (cat === 'restaurant' || cat === 'cafe') {
+    return `${unique.charAt(0).toUpperCase() + unique.slice(1)} — hyper gourmand, et c'est un euphémisme.`;
+  }
+  return `${unique.charAt(0).toUpperCase() + unique.slice(1)} — ça, ça ne s'oublie pas.`;
+}
+
+function interpellation(cat, unique, city) {
+  const m = {
+    restaurant: 'mangé quelque chose d\'aussi bon pour ce prix-là',
+    bar: 'trouvé un bar aussi bien foutu à ' + city,
+    cafe: 'pris un café aussi soigné',
+    boutique: 'trouvé des fringues aussi originales',
+    sport: 'transpiré autant en si peu de temps',
+    loisir: 'vécu une expérience comme ça',
+    beaute: 'pris autant soin de toi'
+  };
+  return m[cat] || 'vécu une expérience comme ça';
+}
+
+function buildContextLine(cat, tone, name) {
+  const intros = {
+    restaurant: ['et c\'est le genre de resto dont tu reparies toute la semaine.', 'la carte est pensée pour les vrais gourmands.', 'l\'adresse qui monte en ce moment dans le quartier.'],
+    bar: ['l\'ambiance parle d\'elle-même dès qu\'on pousse la porte.', 'le genre d\'endroit où on vient pour un verre et on reste toute la soirée.', 'musique, bonne humeur, planches à partager.'],
+    cafe: ['lumière douce, produits de qualité, service au top.', 'l\'endroit parfait pour se poser et souffler.'],
+    boutique: ['chaque pièce est sélectionnée à la main.', 'des produits qu\'on ne trouve pas en grande surface.'],
+    sport: ['concept importé direct de l\'étranger.', 'les coachs connaissent leur affaire.'],
+    loisir: ['expérience immersive, décors soignés, adrénaline garantie.', 'le genre d\'activité qui fait parler.'],
+    beaute: ['protocoles pros, produits haut de gamme, résultats visibles.']
+  };
+  const arr = intros[cat] || ['une adresse qui mérite le détour.'];
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function buildProductLine(unique, extra, cat, tone, name, target) {
+  if (!unique && !extra) {
+    return `Chez ${name}, chaque détail est soigné. La qualité est là, l\'équipe aussi — et ça se ressent dès les premières minutes.`;
+  }
+
+  let base = '';
+  if (unique) {
+    base = unique.charAt(0).toUpperCase() + unique.slice(1);
+    if (!base.endsWith('.') && !base.endsWith('!') && !base.endsWith('?')) base += '.';
+  }
+  if (extra) {
+    base += (base ? ' ' : '') + extra.charAt(0).toUpperCase() + extra.slice(1);
+    if (!base.endsWith('.') && !base.endsWith('!') && !base.endsWith('?')) base += '.';
+  }
+
+  // Tone-based embellishment
+  if (tone === 'enthousiaste') {
+    base += ` Honnêtement, difficile de faire mieux niveau ${cat === 'restaurant' || cat === 'cafe' ? 'gourmandise' : 'expérience'}.`;
+  } else if (tone === 'narratif') {
+    base += ` Et là, tu comprends pourquoi les gens en reparlent.`;
+  } else if (tone === 'casual') {
+    base += ` Bref, c'est le genre de spot qu'on garde précieusement.`;
+  }
+
+  return base;
+}
+
+// ─── RENDER OUTPUT ───
+function renderOutput(segments, meta) {
+  const { name, cat, city, duration, tone, format, target, offerUW, offerPW } = meta;
+
+  // Badges
+  const catColors = {
+    restaurant:'badge-resto', bar:'badge-bar', cafe:'badge-cafe',
+    boutique:'badge-boutique', sport:'badge-sport', loisir:'badge-sport', beaute:'badge-cafe'
+  };
+  const catNames = {
+    restaurant:'Restaurant', bar:'Bar', cafe:'Café', boutique:'Boutique',
+    sport:'Sport', loisir:'Loisir', beaute:'Beauté'
+  };
+
+  const badgesEl = document.getElementById('script-badges');
+  badgesEl.innerHTML = `
+    <span class="script-badge badge-partner">${name}</span>
+    <span class="script-badge ${catColors[cat] || 'badge-partner'} badge">${catNames[cat] || cat}</span>
+    <span class="script-badge badge-dur">${duration}</span>
+    <span class="script-badge badge-tone">${tone}</span>
+  `;
+
+  window._scriptSegments = segments;
+  window._scriptTarget = target;
+  window._scriptMeta = meta;
+
+  // Structured view — chaque ligne est éditable
+  const structEl = document.getElementById('script-structured');
+  structEl.innerHTML = segments.map((s, i) => `
+    <div class="script-segment seg-${s.type}">
+      <div class="seg-time">${s.time}</div>
+      <div style="flex:1">
+        <div class="seg-label">${s.label}</div>
+        <div class="seg-text" contenteditable="true" data-i="${i}"
+             oninput="onSegEdit(${i}, this)"
+             ${s.placeholder ? `data-placeholder="Liste ici les produits commandés / filmés (ex: pizza burrata, spritz, tiramisu…)"` : ''}>${esc(s.text)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  refreshPlainAndCount();
+
+  // Meta label
+  document.getElementById('script-meta-label').textContent = `${name} · ${city} · ${duration} · ${tone}`;
+}
+
+// Édition inline d'un segment → met à jour state + recalc timecodes + word count
+function onSegEdit(i, el) {
+  if (window._scriptSegments && window._scriptSegments[i]) {
+    window._scriptSegments[i].text = el.textContent;
+  }
+  refreshPlainAndCount();
+}
+
+function refreshPlainAndCount() {
+  const segs = window._scriptSegments || [];
+  const target = window._scriptTarget || 170;
+
+  // recalc timecodes (sans toucher au DOM éditable)
+  recomputeTimes(segs);
+  document.querySelectorAll('#script-structured .script-segment').forEach((row, i) => {
+    const tEl = row.querySelector('.seg-time');
+    if (tEl && segs[i]) tEl.textContent = segs[i].time;
+  });
+
+  // texte brut
+  const plainText = segs
+    .filter(s => s.text && s.text.trim())
+    .map(s => `[${s.time}] ${s.text}`).join('\n\n');
+  document.getElementById('script-plain').textContent = plainText;
+
+  // compteur de mots
+  const allText = segs.map(s => s.text).join(' ');
+  const wc = allText.split(/\s+/).filter(Boolean).length;
+  document.getElementById('wc-val').textContent = wc;
+  document.getElementById('wc-target').textContent = `/ ~${target}`;
+  const pct = Math.min(100, (wc / target) * 100);
+  const fill = document.getElementById('wc-fill');
+  fill.style.width = pct + '%';
+  fill.className = 'wc-bar-fill' + (wc > target * 1.15 ? ' over' : '');
+}
+
+function buildClaudePrompt(segments, meta) {
+  const { name, cat, city, duration, tone, format } = meta;
+  const offerUW = document.getElementById('offer-unique-what').value.trim();
+  const offerPW = document.getElementById('offer-perm-what').value.trim();
+  const unique  = document.getElementById('partner-unique').value.trim();
+  const extra   = document.getElementById('partner-extra').value.trim();
+
+  return `Tu es rédacteur pour Klub, une app de bons plans pour les -26 ans présente dans 12 villes en France.
+
+Raffine ce script pour une vidéo partenaire :
+
+PARTENAIRE : ${name}
+CATÉGORIE : ${cat}
+VILLE : ${city}
+DURÉE : ${duration}
+TON : ${tone} (jeune, spontané, pas commercial)
+FORMAT : ${format}
+OFFRE UNIQUE (1×/an) : ${offerUW || 'non renseignée'}
+OFFRE PERMANENTE : ${offerPW || 'non renseignée'}
+CONCEPT UNIQUE : ${unique || 'non renseigné'}
+INFOS SUP : ${extra || 'néant'}
+
+SCRIPT ACTUEL :
+${segments.map(s => `[${s.time}] ${s.text}`).join('\n\n')}
+
+CONSIGNES :
+- Garde le hook fort en ouverture (0-3s)
+- Ton naturel, oral — comme si on parlait à un pote
+- Jamais de superlatif creux (évite "incroyable", "magnifique", "c'est top")
+- Les offres Klub arrivent en fin de script, présentées comme un bonus
+- CTA court et direct en closing
+- Respecte la durée cible (${duration} ≈ ${duration === '15s' ? 70 : duration === '30s' ? 140 : duration === '45s' ? 200 : 260} mots)`;
+}
+
+// ─── COPY ───
+function copyScript() {
+  const view = document.getElementById('script-plain').style.display !== 'none' ? 'plain' : 'structured';
+  let text;
+  if (view === 'plain') {
+    text = document.getElementById('script-plain').textContent;
+  } else {
+    text = Array.from(document.querySelectorAll('.script-segment')).map(s => {
+      const time = s.querySelector('.seg-time').textContent;
+      const label = s.querySelector('.seg-label').textContent;
+      const t = s.querySelector('.seg-text').textContent;
+      return `[${time}] ${label}\n${t}`;
+    }).join('\n\n');
+  }
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copié';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-box-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('btn-copy-prompt');
+    btn.textContent = '✓ Copié';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copier'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ─── VIEW TOGGLE ───
+function setView(v) {
+  const structured = document.getElementById('script-structured');
+  const plain = document.getElementById('script-plain');
+  const btnS = document.getElementById('btn-view-structured');
+  const btnP = document.getElementById('btn-view-plain');
+  if (v === 'structured') {
+    structured.style.display = 'block'; plain.style.display = 'none';
+    btnS.classList.add('active'); btnP.classList.remove('active');
+  } else {
+    structured.style.display = 'none'; plain.style.display = 'block';
+    btnS.classList.remove('active'); btnP.classList.add('active');
+  }
+}
+
+// ─── RESET ───
+function resetAll() {
+  document.getElementById('output-section').style.display = 'none';
+  document.getElementById('partner-name').value = '';
+  document.getElementById('partner-city').value = '';
+  document.getElementById('partner-address').value = '';
+  document.getElementById('partner-unique').value = '';
+  document.getElementById('partner-extra').value = '';
+  document.getElementById('offer-unique-what').value = '';
+  document.getElementById('offer-unique-cond').value = '';
+  document.getElementById('offer-perm-what').value = '';
+  document.getElementById('offer-perm-cond').value = '';
+  ['step1','step2','step3'].forEach(id => {
+    const c = document.getElementById(id);
+    if (!c) return;
+    c.classList.remove('done','open');
+    c.classList.remove('active');
+    const num = c.querySelector('.step-num');
+    num.textContent = id.replace('step','');
+  });
+  document.getElementById('research-ok')?.classList.remove('show');
+  document.getElementById('research-err')?.classList.remove('show');
+  document.getElementById('step1').classList.add('active','open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

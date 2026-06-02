@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: klub-script-generator
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python research_server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: GROQ_API_KEY
+        sync: false   # à renseigner dans le dashboard Render (ne pas commiter)
