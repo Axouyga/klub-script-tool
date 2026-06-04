@@ -506,9 +506,7 @@
     <button class="settings-btn" onclick="openLibrary()" title="Mes scripts enregistrés" style="font-size:13px;padding:6px 12px;display:flex;align-items:center;gap:6px">
       📁 Mes scripts <span id="lib-count" style="background:var(--pink);color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:1px 7px;display:none">0</span>
     </button>
-    <div id="api-status" class="api-key-status missing">⚠ Clé API</div>
     <button class="settings-btn" id="theme-btn" onclick="toggleTheme()" title="Mode jour / nuit">🌙</button>
-    <button class="settings-btn" onclick="openSettings()" title="Paramètres API">⚙️</button>
     <div class="header-tag">Vidéos partenaires 🇫🇷</div>
   </div>
 </header>
@@ -909,7 +907,6 @@ const HOOKS = [
 
 // ─── INIT ───
 window.addEventListener('DOMContentLoaded', () => {
-  refreshApiStatus();
   refreshLibraryCount();
   initTheme();
 });
@@ -1200,15 +1197,11 @@ function goToStep(n) {
 
 // ─── SETTINGS ───
 function refreshApiStatus() {
-  const key = localStorage.getItem('anthropic_api_key') || '';
   const el = document.getElementById('api-status');
-  if (key && key.length > 20) {
-    el.className = 'api-key-status ok';
-    el.textContent = '✓ Clé API';
-  } else {
-    el.className = 'api-key-status missing';
-    el.textContent = '⚠ Clé API';
-  }
+  if (!el) return;  // badge retiré du header (clé API côté serveur)
+  const key = localStorage.getItem('anthropic_api_key') || '';
+  el.className = key && key.length > 20 ? 'api-key-status ok' : 'api-key-status missing';
+  el.textContent = key && key.length > 20 ? '✓ Clé API' : '⚠ Clé API';
 }
 
 function openSettings() {
