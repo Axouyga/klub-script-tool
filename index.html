@@ -145,24 +145,6 @@
   .pill.selected { background: var(--pink-dim); border-color: var(--pink); color: var(--pink-2); box-shadow: 0 0 18px -8px rgba(255,45,107,0.6); }
   .pill.selected.green { background: var(--green-dim); border-color: var(--green); color: var(--green); box-shadow: none; }
 
-  /* ─── HOOKS SECTION ─── */
-  .hooks-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .hook-card {
-    border: 1.5px solid #2a2a2a; border-radius: 10px; padding: 12px 14px;
-    cursor: pointer; transition: all 0.15s; display: flex; align-items: flex-start; gap: 10px;
-  }
-  .hook-card:hover { border-color: #444; background: #1f1f1f; }
-  .hook-card.selected { border-color: var(--pink); background: var(--pink-dim); }
-  .hook-card.selected .hook-ref { color: var(--pink); }
-  .hook-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #444; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-  .hook-card.selected .hook-check { background: var(--pink); border-color: var(--pink); }
-  .hook-check svg { display: none; }
-  .hook-card.selected .hook-check svg { display: block; }
-  .hook-text { flex: 1; }
-  .hook-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-  .hook-example { font-size: 11px; color: var(--text-muted); font-style: italic; line-height: 1.4; }
-  .hook-ref { font-size: 10px; color: #555; margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
-  .hook-perf { font-size: 10px; font-weight: 800; color: #ffd700; margin-left: auto; white-space: nowrap; padding-left: 8px; }
 
   /* ─── GENERATE BUTTON ─── */
   .btn-generate {
@@ -260,11 +242,6 @@
   }
   .view-btn.active { background: #222; border-color: #555; color: var(--text); }
 
-  /* ─── PROMPT BOX ─── */
-  .prompt-box { background: #0e0e0e; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px; margin-top: 16px; }
-  .prompt-box-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .prompt-text { font-size: 12px; color: #aaa; line-height: 1.6; white-space: pre-wrap; font-family: 'SF Mono', 'Fira Code', monospace; }
-
   /* ─── WORD COUNT ─── */
   .wc-bar { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 14px; background: #0f0f0f; border-radius: 8px; border: 1px solid #1e1e1e; }
   .wc-label { font-size: 11px; color: var(--text-muted); }
@@ -302,21 +279,12 @@
   .modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
   .modal-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
   .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
-  .btn-modal-save {
-    flex: 1; padding: 10px; border: none; border-radius: 10px;
-    background: var(--pink); color: white; font-size: 13px; font-weight: 700;
-    cursor: pointer; transition: opacity 0.15s;
-  }
-  .btn-modal-save:hover { opacity: 0.85; }
   .btn-modal-cancel {
-    padding: 10px 18px; border: 1px solid #333; border-radius: 10px;
+    padding: 10px 18px; border: 1px solid var(--card-border); border-radius: 10px;
     background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
+    cursor: pointer; transition: all 0.15s; flex: 1;
   }
-  .btn-modal-cancel:hover { border-color: #555; color: var(--text); }
-  .api-key-status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
-  .api-key-status.ok { background: var(--green-dim); color: var(--green); }
-  .api-key-status.missing { background: rgba(255,100,100,0.1); color: #ff6464; }
+  .btn-modal-cancel:hover { border-color: var(--card-border-hi); color: var(--text); }
 
   /* ─── RESEARCH STATE ─── */
   .btn-search.loading { pointer-events: none; opacity: 0.7; }
@@ -414,7 +382,7 @@
   body.light .pill { background: rgba(20,12,30,0.03); }
   body.light .pill:hover { background: rgba(20,12,30,0.07); }
   body.light .step-num { background: rgba(20,12,30,0.05); border-color: rgba(20,12,30,0.18); }
-  body.light .hint, body.light .inspo-note, body.light .hook-ref { color: #8b8398; }
+  body.light .hint, body.light .inspo-note { color: #8b8398; }
 
   /* Segments du script — teintes claires */
   body.light .seg-hook    { background:#fff0f4; border-color:#ffd1de; }
@@ -434,6 +402,17 @@
   body.light .wc-bar { background:#faf9fc; border-color:var(--card-border); }
   body.light .tag-src { background:#eef1ff; color:#3b5bdb; }
   body.light .inspo-tab { background:#fff; }
+  /* surfaces restantes en mode jour */
+  body.light .btn-copy { background:#fff; border-color:var(--card-border); color:var(--text-muted); }
+  body.light .btn-copy:hover { border-color:var(--pink); color:var(--pink); }
+  body.light .wc-bar-fill-wrap { background:rgba(20,12,30,0.08); }
+  body.light .wc-target { color:#9890a3; }
+  body.light .lib-card, body.light .cand-card, body.light .inspo-card { border-color:var(--card-border); }
+  body.light .lib-card:hover, body.light .cand-card:hover { background:var(--pink-dim); }
+  body.light .lib-del { border-color:#e3b3b3; color:#c0392b; }
+  body.light .lib-del:hover { background:#fbe9e9; }
+  body.light .inspo-group-title { color:#3b5bdb; }
+  body.light .seg-text:empty:before, body.light .hv-label { color:#8b8398; }
 
   /* ════════════ MOBILE / TABLETTE ════════════ */
   @media (max-width: 720px) {
@@ -444,7 +423,6 @@
     .k { width: 38px; height: 38px; font-size: 19px; border-radius: 11px; }
     h1 { font-size: 17px; }
     .settings-btn { padding: 8px 12px !important; font-size: 12.5px !important; }
-    #api-status { font-size: 11px; }
 
     main { padding: 16px 14px 56px; gap: 14px; }
 
@@ -481,7 +459,7 @@
     .hv-chip { font-size: 13px; padding: 8px 12px; }
 
     /* Candidats / cartes : tap large */
-    .cand-card, .lib-card, .hook-card { padding: 14px; }
+    .cand-card, .lib-card { padding: 14px; }
     .lib-del { min-width: 44px; min-height: 40px; }
   }
 
@@ -508,7 +486,7 @@
     <button class="settings-btn" onclick="openLibrary()" title="Mes scripts enregistrés" style="font-size:13px;padding:6px 12px;display:flex;align-items:center;gap:6px">
       📁 Mes scripts <span id="lib-count" style="background:var(--pink);color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:1px 7px;display:none">0</span>
     </button>
-    <button class="settings-btn" id="theme-btn" onclick="toggleTheme()" title="Mode jour / nuit">🌙</button>
+    <button class="settings-btn" id="theme-btn" onclick="toggleTheme()" title="Mode jour / nuit" aria-label="Basculer le thème jour/nuit">🌙</button>
     <div class="header-tag">Vidéos partenaires 🇫🇷</div>
   </div>
 </header>
@@ -525,29 +503,6 @@
   </div>
 </div>
 
-<!-- ─── SETTINGS MODAL ─── -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeSettingsOutside(event)">
-  <div class="modal">
-    <div class="modal-title">🔑 Clé API Groq — Gratuite</div>
-    <div class="modal-sub">
-      Utilise <strong>Llama 3.3 70B</strong> + recherche DuckDuckGo intégrée.<br>
-      Gratuit · Pas de carte bancaire · Ultra rapide.<br><br>
-      1. Va sur <a href="https://console.groq.com/keys" target="_blank" style="color:var(--pink)">console.groq.com/keys</a><br>
-      2. Clique <strong>"Create API key"</strong><br>
-      3. Colle la clé ici 👇
-    </div>
-    <label>Clé API Groq (commence par <code style="color:#aaa">gsk_</code>)</label>
-    <div style="display:flex;gap:8px;margin-top:6px">
-      <input type="password" id="api-key-input" placeholder="gsk_…" style="flex:1">
-      <button onclick="toggleKeyVisibility()" style="background:#222;border:1px solid #333;border-radius:8px;color:#888;padding:0 12px;cursor:pointer;font-size:14px" id="eye-btn">👁</button>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn-modal-save" onclick="saveApiKey()">Enregistrer</button>
-      <button class="btn-modal-cancel" onclick="closeSettings()">Annuler</button>
-    </div>
-  </div>
-</div>
 
 <!-- ─── INSPIRATION MODAL ─── -->
 <div class="modal-overlay" id="inspo-overlay" onclick="closeInspoOutside(event)">
@@ -591,10 +546,10 @@
       <div class="research-error-banner" id="research-err"></div>
 
       <div class="search-row">
-        <input type="text" id="partner-name" placeholder="Nom du partenaire (ex: Crousty Game, Bellini, Rush Action…)" oninput="onPartnerInput()" onkeydown="if(event.key==='Enter') searchPartner()">
-        <button class="btn-search" id="btn-search" onclick="searchPartner()">
+        <input type="text" id="partner-name" maxlength="80" autocomplete="off" aria-label="Nom du partenaire" placeholder="Nom du partenaire (ex: Crousty Game, Bellini, Rush Action…)" onkeydown="if(event.key==='Enter') searchPartner()">
+        <button class="btn-search" id="btn-search" onclick="searchPartner()" aria-label="Rechercher le partenaire avec l'IA">
           <div class="spin-sm"></div>
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <svg aria-hidden="true" class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           Rechercher avec IA
         </button>
       </div>
@@ -614,23 +569,23 @@
         </div>
         <div class="form-group">
           <label>Ville</label>
-          <input type="text" id="partner-city" placeholder="ex: Toulouse, Bordeaux, Nantes…">
+          <input type="text" id="partner-city" maxlength="60" placeholder="ex: Toulouse, Bordeaux, Nantes…">
         </div>
         <div class="form-group">
           <label>Adresse / Quartier</label>
-          <input type="text" id="partner-address" placeholder="ex: Place du Capitole, centre-ville…">
+          <input type="text" id="partner-address" maxlength="120" placeholder="ex: Place du Capitole, centre-ville…">
         </div>
       </div>
 
       <div class="form-group full" style="margin-bottom:14px">
         <label>Ce qui rend ce partenaire unique</label>
-        <textarea id="partner-unique" placeholder="Son concept original, sa spécialité, son ambiance, ce que les -26 ans adorent… (se souvenir : le concept = le hook)"></textarea>
+        <textarea id="partner-unique" maxlength="600" placeholder="Son concept original, sa spécialité, son ambiance, ce que les -26 ans adorent… (se souvenir : le concept = le hook)"></textarea>
         <div class="hint">💡 Le format qui explose = Hook par concept original (ex: "pizzeria avec la plus belle vue", "calzone frites qu'on trouve nulle part ailleurs")</div>
       </div>
 
       <div class="form-group full">
         <label>Quelques infos supplémentaires (facultatif)</label>
-        <textarea id="partner-extra" placeholder="Prix, spécialités à mentionner, ambiance, type de clientèle, anecdote…" style="min-height:60px"></textarea>
+        <textarea id="partner-extra" maxlength="800" placeholder="Prix, spécialités à mentionner, ambiance, type de clientèle, anecdote…" style="min-height:60px"></textarea>
       </div>
 
       <button class="btn-generate" onclick="goToStep(2)" style="margin-top:14px; background: linear-gradient(135deg,#333,#222); font-size:13px; padding:11px">
@@ -656,11 +611,11 @@
         <div class="form-row">
           <div class="form-group">
             <label>Ce que le membre reçoit</label>
-            <input type="text" id="offer-unique-what" placeholder="ex: 1 pizza achetée = 1 pizza offerte">
+            <input type="text" id="offer-unique-what" maxlength="160" placeholder="ex: 1 pizza achetée = 1 pizza offerte">
           </div>
           <div class="form-group">
             <label>Conditions (facultatif)</label>
-            <input type="text" id="offer-unique-cond" placeholder="ex: à partir de 2 personnes, dîner uniquement…">
+            <input type="text" id="offer-unique-cond" maxlength="160" placeholder="ex: à partir de 2 personnes, dîner uniquement…">
           </div>
         </div>
       </div>
@@ -670,11 +625,11 @@
         <div class="form-row">
           <div class="form-group">
             <label>Ce que le membre reçoit</label>
-            <input type="text" id="offer-perm-what" placeholder="ex: 1 pinte achetée = 1 pinte offerte de 20h à 22h">
+            <input type="text" id="offer-perm-what" maxlength="160" placeholder="ex: 1 pinte achetée = 1 pinte offerte de 20h à 22h">
           </div>
           <div class="form-group">
             <label>Conditions (facultatif)</label>
-            <input type="text" id="offer-perm-cond" placeholder="ex: happy hour, hors week-end…">
+            <input type="text" id="offer-perm-cond" maxlength="160" placeholder="ex: happy hour, hors week-end…">
           </div>
         </div>
       </div>
@@ -738,7 +693,7 @@
         🎯 Le hook est généré automatiquement dans le style des vraies vidéos Klub. Le nom du partenaire n'est jamais cité.
       </div>
       <button class="btn-generate" id="btn-gen" onclick="generateScript()">
-        <svg class="gen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <svg aria-hidden="true" class="gen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         <div class="gen-spin" style="display:none;width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite"></div>
         <span class="gen-label">Générer le script</span>
       </button>
@@ -767,11 +722,11 @@
             <div class="script-meta" id="script-badges"></div>
             <div class="script-actions">
               <button class="btn-copy" id="btn-copy" onclick="copyScript()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 Copier
               </button>
               <button class="btn-copy" id="btn-save" onclick="saveScript()" style="border-color:var(--green);color:var(--green)">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                 Enregistrer
               </button>
             </div>
@@ -809,109 +764,22 @@ const API_BASE = _isLocal
 const state = {
   duration: '30s',
   tone: 'casual',
-  format: 'voixoff',
-  selectedHooks: new Set()
+  format: 'voixoff'
 };
 
-// ─── HOOKS DATA ───
-const HOOKS = [
-  {
-    id: 'h1',
-    title: 'Concept unique introuvable ailleurs',
-    example: '"C\'est le truc qu\'on trouve quasiment nulle part, les panzeeroti. Des mini calzone frites à déguster sur le pouce."',
-    ref: 'Casa di Tursi — Toulouse',
-    perf: null,
-    cat: ['restaurant','cafe'],
-    tip: 'Démarre sur l\'originalité du produit/concept avant même de nommer le lieu'
-  },
-  {
-    id: 'h2',
-    title: 'Offre directe en ouverture',
-    example: '"Ton taco c\'est offert Place Saint-Pierre à Toulouse avec Klub, on te montre comment."',
-    ref: 'Tacos Avenue — Toulouse',
-    perf: null,
-    cat: ['restaurant','bar','cafe'],
-    tip: 'L\'offre Klub comme hook direct — fort pour convertir, mais moins viral'
-  },
-  {
-    id: 'h3',
-    title: 'L\'activité dont personne n\'a encore entendu parler',
-    example: '"Une activité dont t\'as pas encore entendu parler à Toulouse, prépare-toi à faire travailler ta force, ta précision et ton cerveau."',
-    ref: 'Rush Action Game — Toulouse',
-    perf: null,
-    cat: ['loisir','sport'],
-    tip: 'Fort pour les activités récentes / peu connues. Crée de la curiosité immédiate'
-  },
-  {
-    id: 'h4',
-    title: 'Le concept qui fait le tour des réseaux',
-    example: '"C\'est le concept qui fait le tour des réseaux en ce moment et ça vient de débarquer à deux pas du Capitole."',
-    ref: 'Crousty Game — Toulouse',
-    perf: null,
-    cat: ['restaurant','loisir','boutique'],
-    tip: 'Social proof + FOMO. Marche si le concept est réellement en vogue'
-  },
-  {
-    id: 'h5',
-    title: 'On s\'est arrêté là et on n\'a rien regretté',
-    example: '"On s\'est arrêté là quand le soleil a enfin décidé de revenir, et on n\'a rien regretté."',
-    ref: 'Le Bellini — Toulouse',
-    perf: null,
-    cat: ['restaurant','cafe','bar'],
-    tip: 'Ton narratif / découverte. Crée de la confiance et de l\'authenticité'
-  },
-  {
-    id: 'h6',
-    title: 'Le spot parfait pour [situation]',
-    example: '"C\'est le spot parfait pour s\'installer tranquille avec des potes et se laisser embarquer par l\'énergie du lieu."',
-    ref: 'Black Lion — Toulouse',
-    perf: null,
-    cat: ['bar','cafe','restaurant'],
-    tip: 'Parle directement à l\'usage / occasion. Fort pour créer de l\'identification'
-  },
-  {
-    id: 'h7',
-    title: 'Superlatif géo — le meilleur / le seul à [ville]',
-    example: '"Sans doute la pizzeria avec la plus belle vue de Toulouse."',
-    ref: 'Le Bellini (variation)',
-    perf: '🏆 574K vues réseau',
-    cat: ['restaurant','bar','cafe','boutique'],
-    tip: 'Hook court et fort. Fonctionne si le claim est crédible et vérifiable visuellement'
-  },
-  {
-    id: 'h8',
-    title: 'Description sensorielle en ouverture',
-    example: '"Des frites dorées, une sauce secrète maison… et ça dégouline juste comme il faut."',
-    ref: 'Nantes top videos — 515K vues',
-    perf: '⭐ 515K vues',
-    cat: ['restaurant','cafe'],
-    tip: 'Démarre sur le visuel/sensoriel avant d\'expliquer le lieu. Fort pour la nourriture'
-  },
-  {
-    id: 'h9',
-    title: 'Interpellation directe "tu / vous"',
-    example: '"T\'as déjà mangé quelque chose d\'aussi généreux pour 10 balles à Toulouse ?"',
-    ref: 'Pattern récurrent réseau Klub',
-    perf: null,
-    cat: ['restaurant','bar','boutique','sport','loisir','beaute'],
-    tip: 'Universel. L\'interpellation directe accroche l\'attention dès les premiers mots'
-  },
-  {
-    id: 'h10',
-    title: 'Révélation progressive — "mais qu\'est-ce que c\'est ?"',
-    example: '"C\'est à ce moment-là que tu te demandes — mais qu\'est-ce que c\'est qu\'un panzeeroti ?"',
-    ref: 'Casa di Tursi — Toulouse',
-    perf: null,
-    cat: ['restaurant','loisir','boutique'],
-    tip: 'Crée du suspense / curiosité. Fonctionne si le produit a un nom ou concept inhabituel'
-  }
-];
 
 // ─── INIT ───
 window.addEventListener('DOMContentLoaded', () => {
   refreshLibraryCount();
   initTheme();
   warmUp();   // réveille Render pendant que l'utilisateur remplit le formulaire
+});
+
+// Échap ferme n'importe quel modal ouvert
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
 });
 
 // ─── THÈME JOUR / NUIT ───
@@ -1002,7 +870,7 @@ function renderLibrary() {
           ${s.city ? esc(s.city) : '—'}<span class="lib-dot">·</span>${esc(s.cat||'?')}<span class="lib-dot">·</span>${esc(s.duration||'')}<span class="lib-dot">·</span>${esc(s.savedAt||'')}
         </div>
       </div>
-      <button class="lib-del" onclick="deleteSavedScript(${i}, event)">🗑</button>
+      <button class="lib-del" onclick="deleteSavedScript(${i}, event)" aria-label="Supprimer ce script" title="Supprimer">🗑</button>
     </div>
   `).join('');
 }
@@ -1130,40 +998,11 @@ function switchInspoInternal(tab) {
 
 function copyInspo(el) {
   const t = el.getAttribute('data-t') || '';
-  navigator.clipboard.writeText(t).then(() => {
-    const o = el.textContent;
-    el.textContent = '✓ Copié';
+  const o = el.textContent;
+  copyText(t).then(ok => {
+    el.textContent = ok ? '✓ Copié' : '⚠ Échec';
     setTimeout(() => el.textContent = o, 1500);
   });
-}
-
-function renderHooks() {
-  const container = document.getElementById('hooks-list');
-  if (!container) return;
-  container.innerHTML = HOOKS.map(h => `
-    <div class="hook-card" id="hook-${h.id}" onclick="toggleHook('${h.id}')">
-      <div class="hook-check">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div class="hook-text">
-        <div class="hook-title">${h.title}</div>
-        <div class="hook-example">${h.example}</div>
-        <div class="hook-ref">${h.ref}</div>
-      </div>
-      ${h.perf ? `<div class="hook-perf">${h.perf}</div>` : ''}
-    </div>
-  `).join('');
-}
-
-function toggleHook(id) {
-  const el = document.getElementById('hook-' + id);
-  if (state.selectedHooks.has(id)) {
-    state.selectedHooks.delete(id);
-    el.classList.remove('selected');
-  } else {
-    state.selectedHooks.add(id);
-    el.classList.add('selected');
-  }
 }
 
 // ─── PILLS ───
@@ -1198,44 +1037,9 @@ function goToStep(n) {
   }
 }
 
-// ─── SETTINGS ───
-function refreshApiStatus() {
-  const el = document.getElementById('api-status');
-  if (!el) return;  // badge retiré du header (clé API côté serveur)
-  const key = localStorage.getItem('anthropic_api_key') || '';
-  el.className = key && key.length > 20 ? 'api-key-status ok' : 'api-key-status missing';
-  el.textContent = key && key.length > 20 ? '✓ Clé API' : '⚠ Clé API';
-}
-
-function openSettings() {
-  document.getElementById('api-key-input').value = localStorage.getItem('anthropic_api_key') || '';
-  document.getElementById('modal-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('api-key-input').focus(), 100);
-}
-
-function closeSettings() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-function closeSettingsOutside(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeSettings();
-}
-
-function toggleKeyVisibility() {
-  const inp = document.getElementById('api-key-input');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-
-function saveApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (key) localStorage.setItem('anthropic_api_key', key);
-  else localStorage.removeItem('anthropic_api_key');
-  closeSettings();
-  refreshApiStatus();
-}
-
 // ─── SEARCH PARTNER (IA) ───
-function getApiKey() { return localStorage.getItem('anthropic_api_key') || ''; }
+// La clé API vit côté serveur (variable d'env Render). Pas de saisie côté client.
+function getApiKey() { return ''; }
 
 function setSearchLoading(on) {
   const btn = document.getElementById('btn-search');
@@ -1281,10 +1085,12 @@ function warmUp() { fetchT(API_BASE + '/health', {}, 60000).catch(() => {}); }
 
 // ── ÉTAPE 1 : chercher les candidats par nom seul ──
 async function searchPartner() {
+  // garde-fou : ignore si une recherche est déjà en cours (clic OU touche Entrée)
+  if (document.getElementById('btn-search').classList.contains('loading')) return;
   const name = document.getElementById('partner-name').value.trim();
   if (!name) { document.getElementById('partner-name').focus(); return; }
 
-  const api_key = getApiKey();  // peut être vide → le serveur utilise sa clé env si dispo
+  const api_key = getApiKey();  // vide → le serveur utilise sa clé env
 
   setSearchLoading(true);
   clearBanners();
@@ -1304,7 +1110,6 @@ async function searchPartner() {
     const data = await res.json();
 
     if (data.error) {
-      if (/cl[ée] api/i.test(data.error)) openSettings();
       showErr(data.error, searchPartner);
       return;
     }
@@ -1451,8 +1256,6 @@ function prefillFields(data) {
   }
 }
 
-function onPartnerInput() { /* intentionally empty */ }
-
 // ─── SCRIPT GENERATION ───
 function setGenLoading(on) {
   const btn = document.getElementById('btn-gen');
@@ -1547,7 +1350,7 @@ async function generateScript() {
   if (!segments) {
     segments = buildScript({ name, cat, city, address, unique, extra,
                              offerUW, offerUC, offerPW, offerPC,
-                             duration, tone, format, selectedHookObjs: [], target });
+                             duration, tone, format, target });
   }
 
   renderOutput(segments, meta);
@@ -1557,80 +1360,30 @@ async function generateScript() {
   setTimeout(() => document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 }
 
-function buildScript({ name, cat, city, address, unique, extra, offerUW, offerUC, offerPW, offerPC, duration, tone, format, selectedHookObjs, target }) {
+function buildScript({ name, cat, city, address, unique, extra, offerUW, offerUC, offerPW, offerPC, duration, tone, format, target }) {
 
   const cityRef = city || 'ta ville';
   const addrRef = address ? ` (${address})` : '';
   const nameDisplay = name || 'ce spot';
 
-  // ── HOOK ──────────────────────────────────────────────────────
+  // ── HOOK (fallback local, selon le ton) ──────────────────────
   let hookText = '';
-
-  const primaryHook = selectedHookObjs[0];
-
-  if (primaryHook) {
-    switch (primaryHook.id) {
-      case 'h1': // Concept unique
-        hookText = unique
-          ? `${unique.charAt(0).toUpperCase() + unique.slice(1)}. ${tone === 'enthousiaste' ? 'Et crois-moi, tu n\'as jamais vu ça à ' + cityRef + '.' : 'Impossible à trouver ailleurs à ' + cityRef + '.'}`
-          : `Il y a un truc qu'on trouve quasiment nulle part à ${cityRef} — et c'est chez ${nameDisplay}.`;
-        break;
-      case 'h2': // Offre directe
-        hookText = offerUW
-          ? `${offerUW} — chez ${nameDisplay} à ${cityRef} avec Klub, on te montre comment.`
-          : `Le meilleur plan de ${cityRef} en ce moment, c'est chez ${nameDisplay} avec Klub.`;
-        break;
-      case 'h3': // Activité inconnue
-        hookText = `Une ${catLabel(cat)} dont t'as pas encore entendu parler à ${cityRef}${addrRef}.`;
-        break;
-      case 'h4': // Tour des réseaux
-        hookText = `C'est le concept qui fait le tour des réseaux en ce moment, et ça vient de débarquer à ${cityRef}.`;
-        break;
-      case 'h5': // On s'est arrêté là
-        hookText = `On s'est arrêté là et on n'a rien regretté. Bienvenue chez ${nameDisplay}${addrRef}.`;
-        break;
-      case 'h6': // Spot parfait
-        hookText = `C'est le spot parfait ${contextLine(cat)} à ${cityRef}${addrRef}.`;
-        break;
-      case 'h7': // Superlatif géo
-        hookText = `Sans doute ${superlatif(cat, unique)} de ${cityRef}${addrRef}.`;
-        break;
-      case 'h8': // Sensoriel
-        hookText = unique
-          ? `${sensoryOpener(unique, cat)}`
-          : `Ce qui t'attend chez ${nameDisplay}, c'est du lourd.`;
-        break;
-      case 'h9': // Interpellation
-        hookText = `T'as déjà ${interpellation(cat, unique, city)} ? Ça se passe chez ${nameDisplay}${addrRef}.`;
-        break;
-      case 'h10': // Révélation progressive
-        hookText = unique
-          ? `${nameDisplay}, ça te dit peut-être quelque chose. Mais ce que tu ne sais pas encore, c'est ${unique.toLowerCase()}.`
-          : `${nameDisplay} vient d'ouvrir à ${cityRef}. Mais ce que tu ne sais pas encore, ça change tout.`;
-        break;
-      default:
-        hookText = `Bienvenue chez ${nameDisplay}${addrRef}.`;
-    }
-  } else {
-    // Default hook based on tone
-    switch (tone) {
-      case 'casual':
-        hookText = address
-          ? `On vous emmène chez ${nameDisplay}, ${address} à ${cityRef}.`
-          : `Nouveau bon plan à ${cityRef} — ${nameDisplay}, et c'est du lourd.`;
-        break;
-      case 'enthousiaste':
-        hookText = `${nameDisplay} à ${cityRef} — honnêtement, on ne s'attendait pas à ça.`;
-        break;
-      case 'narratif':
-        hookText = `On cherchait un spot${address ? ' ' + address : ''} à ${cityRef}. On n'a pas cherché longtemps.`;
-        break;
-      case 'concept':
-        hookText = unique
-          ? `${unique.charAt(0).toUpperCase() + unique.slice(1)} — voilà ce qui t'attend chez ${nameDisplay}.`
-          : `${nameDisplay}, c'est pas juste un ${catLabel(cat)}. C'est une expérience.`;
-        break;
-    }
+  switch (tone) {
+    case 'enthousiaste':
+      hookText = `${nameDisplay} à ${cityRef} — honnêtement, on ne s'attendait pas à ça.`;
+      break;
+    case 'narratif':
+      hookText = `On cherchait un spot${address ? ' ' + address : ''} à ${cityRef}. On n'a pas cherché longtemps.`;
+      break;
+    case 'concept':
+      hookText = unique
+        ? `${unique.charAt(0).toUpperCase() + unique.slice(1)} — voilà ce qui t'attend chez ${nameDisplay}.`
+        : `${nameDisplay}, c'est pas juste un ${catLabel(cat)}. C'est une expérience.`;
+      break;
+    default: // casual
+      hookText = address
+        ? `On vous emmène chez ${nameDisplay}, ${address} à ${cityRef}.`
+        : `Nouveau bon plan à ${cityRef} — ${nameDisplay}, et c'est du lourd.`;
   }
 
   // ── CONTEXT ──────────────────────────────────────────────────
@@ -1732,53 +1485,6 @@ function catLabel(cat) {
   return m[cat] || cat;
 }
 
-function contextLine(cat) {
-  const m = {
-    restaurant: 'pour un déjeuner entre potes ou un dîner qui change',
-    bar: 'pour s\'installer tranquille avec des potes',
-    cafe: 'pour prendre un café comme il faut',
-    boutique: 'pour shopper des pièces uniques',
-    sport: 'pour travailler ton physique autrement',
-    loisir: 'pour vivre quelque chose de nouveau',
-    beaute: 'pour prendre soin de toi'
-  };
-  return m[cat] || 'pour vivre quelque chose de bien';
-}
-
-function superlatif(cat, unique) {
-  if (unique && unique.length > 5) {
-    const words = unique.split(' ');
-    return `le ${catLabel(cat)} avec ${words.slice(0,6).join(' ')}`;
-  }
-  const m = {
-    restaurant: 'la table la plus gourmande', bar: 'le bar avec la meilleure ambiance',
-    cafe: 'le café avec l\'atmosphère la plus unique', boutique: 'la boutique avec les pièces les plus originales',
-    sport: 'l\'expérience sport la plus intense', loisir: 'l\'activité la plus originale', beaute: 'l\'endroit le plus zen'
-  };
-  return m[cat] || 'l\'endroit à ne pas manquer';
-}
-
-function sensoryOpener(unique, cat) {
-  const u = unique.toLowerCase();
-  if (cat === 'restaurant' || cat === 'cafe') {
-    return `${unique.charAt(0).toUpperCase() + unique.slice(1)} — hyper gourmand, et c'est un euphémisme.`;
-  }
-  return `${unique.charAt(0).toUpperCase() + unique.slice(1)} — ça, ça ne s'oublie pas.`;
-}
-
-function interpellation(cat, unique, city) {
-  const m = {
-    restaurant: 'mangé quelque chose d\'aussi bon pour ce prix-là',
-    bar: 'trouvé un bar aussi bien foutu à ' + city,
-    cafe: 'pris un café aussi soigné',
-    boutique: 'trouvé des fringues aussi originales',
-    sport: 'transpiré autant en si peu de temps',
-    loisir: 'vécu une expérience comme ça',
-    beaute: 'pris autant soin de toi'
-  };
-  return m[cat] || 'vécu une expérience comme ça';
-}
-
 function buildContextLine(cat, tone, name) {
   const intros = {
     restaurant: ['et c\'est le genre de resto dont tu reparies toute la semaine.', 'la carte est pensée pour les vrais gourmands.', 'l\'adresse qui monte en ce moment dans le quartier.'],
@@ -1825,10 +1531,6 @@ function renderOutput(segments, meta) {
   const { name, cat, city, duration, tone, format, target, offerUW, offerPW } = meta;
 
   // Badges
-  const catColors = {
-    restaurant:'badge-resto', bar:'badge-bar', cafe:'badge-cafe',
-    boutique:'badge-boutique', sport:'badge-sport', loisir:'badge-sport', beaute:'badge-cafe'
-  };
   const catNames = {
     restaurant:'Restaurant', bar:'Bar', cafe:'Café', boutique:'Boutique',
     sport:'Sport', loisir:'Loisir', beaute:'Beauté'
@@ -1836,10 +1538,10 @@ function renderOutput(segments, meta) {
 
   const badgesEl = document.getElementById('script-badges');
   badgesEl.innerHTML = `
-    <span class="script-badge badge-partner">${name}</span>
-    <span class="script-badge ${catColors[cat] || 'badge-partner'} badge">${catNames[cat] || cat}</span>
-    <span class="script-badge badge-dur">${duration}</span>
-    <span class="script-badge badge-tone">${tone}</span>
+    <span class="script-badge badge-partner">${esc(name)}</span>
+    <span class="script-badge badge-tone">${esc(catNames[cat] || cat)}</span>
+    <span class="script-badge badge-dur">${esc(duration)}</span>
+    <span class="script-badge badge-tone">${esc(tone)}</span>
   `;
 
   window._scriptSegments = segments;
@@ -1928,40 +1630,6 @@ function refreshPlainAndCount() {
   fill.className = 'wc-bar-fill' + (wc > target * 1.15 ? ' over' : '');
 }
 
-function buildClaudePrompt(segments, meta) {
-  const { name, cat, city, duration, tone, format } = meta;
-  const offerUW = document.getElementById('offer-unique-what').value.trim();
-  const offerPW = document.getElementById('offer-perm-what').value.trim();
-  const unique  = document.getElementById('partner-unique').value.trim();
-  const extra   = document.getElementById('partner-extra').value.trim();
-
-  return `Tu es rédacteur pour Klub, une app de bons plans pour les -26 ans présente dans 12 villes en France.
-
-Raffine ce script pour une vidéo partenaire :
-
-PARTENAIRE : ${name}
-CATÉGORIE : ${cat}
-VILLE : ${city}
-DURÉE : ${duration}
-TON : ${tone} (jeune, spontané, pas commercial)
-FORMAT : ${format}
-OFFRE UNIQUE (1×/an) : ${offerUW || 'non renseignée'}
-OFFRE PERMANENTE : ${offerPW || 'non renseignée'}
-CONCEPT UNIQUE : ${unique || 'non renseigné'}
-INFOS SUP : ${extra || 'néant'}
-
-SCRIPT ACTUEL :
-${segments.map(s => `[${s.time}] ${s.text}`).join('\n\n')}
-
-CONSIGNES :
-- Garde le hook fort en ouverture (0-3s)
-- Ton naturel, oral — comme si on parlait à un pote
-- Jamais de superlatif creux (évite "incroyable", "magnifique", "c'est top")
-- Les offres Klub arrivent en fin de script, présentées comme un bonus
-- CTA court et direct en closing
-- Respecte la durée cible (${duration} ≈ ${duration === '15s' ? 70 : duration === '30s' ? 140 : duration === '45s' ? 200 : 260} mots)`;
-}
-
 // ─── COPY ───
 function copyScript() {
   const view = document.getElementById('script-plain').style.display !== 'none' ? 'plain' : 'structured';
@@ -1976,22 +1644,30 @@ function copyScript() {
       return `[${time}] ${label}\n${t}`;
     }).join('\n\n');
   }
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('btn-copy');
-    btn.textContent = '✓ Copié';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copier'; btn.classList.remove('copied'); }, 2000);
+  const btn = document.getElementById('btn-copy');
+  copyText(text).then(ok => {
+    btn.textContent = ok ? '✓ Copié' : '⚠ Échec';
+    btn.classList.toggle('copied', ok);
+    setTimeout(() => { btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copier'; btn.classList.remove('copied'); }, 2000);
   });
 }
 
-function copyPrompt() {
-  const text = document.getElementById('prompt-box-text').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById('btn-copy-prompt');
-    btn.textContent = '✓ Copié';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copier'; btn.classList.remove('copied'); }, 2000);
-  });
+// Copie robuste : clipboard API + fallback execCommand, jamais d'échec silencieux
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (e) { /* fallback ci-dessous */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch (e) { return false; }
 }
 
 // ─── VIEW TOGGLE ───

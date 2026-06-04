@@ -9,11 +9,34 @@ import http.server
 import json
 import os
 import re
-import urllib.request
-import urllib.error
+import sys
+import traceback
 
 PORT = int(os.environ.get('PORT', 8744))
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+MODEL = "llama-3.3-70b-versatile"
+MAX_BODY = 64 * 1024          # 64 Ko max par requête POST
+MAX_FIELD = 400               # tronque les champs texte (anti-abus / prompt injection)
+GROQ_TIMEOUT = 35             # secondes
+DDGS_TIMEOUT = 10
+
+# Fichiers publics autorisés en GET (jamais servir .py / .json / backups)
+PUBLIC_FILES = {"", "index.html", "script-generator.html"}
+
+
+def log_err(msg):
+    """Trace les erreurs vers stderr (visible dans les logs Render)."""
+    print(f"[ERROR] {msg}", file=sys.stderr, flush=True)
+
+
+def make_groq(api_key):
+    from groq import Groq
+    return Groq(api_key=api_key, timeout=GROQ_TIMEOUT, max_retries=1)
+
+
+def clip(v, n=MAX_FIELD):
+    return (v or "")[:n]
 
 SYSTEM_PROMPT = """Tu es un assistant pour Klub, une app de bons plans pour les -26 ans en France.
 Tu reçois des résultats de recherche web sur un établissement. Analyse-les et retourne UNIQUEMENT un JSON valide.
@@ -94,9 +117,7 @@ Adapte le nombre de segments à la durée (15s = 3 segments max, 60s = 5). Aucun
 
 
 def call_script(data: dict, api_key: str) -> dict:
-    from groq import Groq
-
-    client = Groq(api_key=api_key)
+    client = make_groq(api_key)
 
     dur_words = {"15s": 85, "30s": 170, "45s": 250, "60s": 330}
     duration = data.get("duration", "30s")
@@ -124,12 +145,12 @@ def call_script(data: dict, api_key: str) -> dict:
     offers_txt = "\n".join(offers) if offers else "Avantages exclusifs avec le pass Klub"
 
     brief = f"""FICHE PARTENAIRE (NE JAMAIS citer le nom dans le script) :
-- Nom interne (NE PAS dire) : {data.get('name','?')}
-- Catégorie : {data.get('cat','?')}
-- Ville : {data.get('city','?')}
-- Quartier / adresse : {data.get('address','?')}
-- Ce qui le rend unique : {data.get('unique','?')}
-- Infos / spécialités : {data.get('extra','?')}
+- Nom interne (NE PAS dire) : {clip(data.get('name'),120) or '?'}
+- Catégorie : {clip(data.get('cat'),40) or '?'}
+- Ville : {clip(data.get('city'),60) or '?'}
+- Quartier / adresse : {clip(data.get('address'),120) or '?'}
+- Ce qui le rend unique : {clip(data.get('unique'),600) or '?'}
+- Infos / spécialités : {clip(data.get('extra'),800) or '?'}
 
 OFFRES KLUB :
 {offers_txt}
@@ -142,7 +163,7 @@ PARAMÈTRES :
 Écris le script Klub maintenant (JSON segments uniquement, JAMAIS le nom du partenaire)."""
 
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model=MODEL,
         messages=[
             {"role": "system", "content": SCRIPT_SYSTEM_PROMPT},
             {"role": "user",   "content": brief},
@@ -193,9 +214,9 @@ def _ddg_text(queries, max_per=3, cap=12):
     seen = set()
     snippets = []
     try:
-        with DDGS() as ddgs:
+        with DDGS(timeout=DDGS_TIMEOUT) as ddgs:
             for q in queries:
-                for r in list(ddgs.text(q, max_results=max_per)):
+                for r in ddgs.text(q, max_results=max_per):
                     body  = (r.get('body')  or '').strip()
                     title = (r.get('title') or '').strip()
                     href  = (r.get('href')  or '').strip()
@@ -208,15 +229,13 @@ def _ddg_text(queries, max_per=3, cap=12):
                         if body:
                             block += f"\n{body}"
                         snippets.append(block)
-    except Exception:
-        pass
+    except Exception as e:
+        log_err(f"ddgs: {e}")
     return snippets[:cap]
 
 
 def find_candidates(partner: str, api_key: str) -> list:
     """Cherche par nom seul → liste d'établissements candidats distincts."""
-    from groq import Groq
-
     snippets = _ddg_text([
         f'"{partner}" restaurant bar café France adresse',
         f'"{partner}" avis horaires',
@@ -225,10 +244,10 @@ def find_candidates(partner: str, api_key: str) -> list:
     if not snippets:
         return []
 
-    client = Groq(api_key=api_key)
+    client = make_groq(api_key)
     raw = "\n\n".join(snippets)
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model=MODEL,
         messages=[
             {"role": "system", "content": CANDIDATES_PROMPT},
             {"role": "user",   "content": f"Nom recherché : {partner}\n\n=== RÉSULTATS WEB ===\n{raw}"}
@@ -264,9 +283,7 @@ def web_search(partner: str, city: str) -> str:
 
 
 def call_research(partner: str, city: str, api_key: str) -> dict:
-    from groq import Groq
-
-    client = Groq(api_key=api_key)
+    client = make_groq(api_key)
 
     # Recherche web réelle
     raw_results = web_search(partner, city)
@@ -283,7 +300,7 @@ def call_research(partner: str, city: str, api_key: str) -> dict:
     user_msg = f"{context}\n\nGénère le JSON pour créer un script vidéo Klub (-26 ans) sur cet établissement."
 
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model=MODEL,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user",   "content": user_msg}
@@ -309,7 +326,7 @@ def call_research(partner: str, city: str, api_key: str) -> dict:
         "unique": None, "address": None, "quartier": None,
         "category": None, "specialties": None, "ambiance": None,
         "price": None, "_source": source,
-        "extra": text.strip()[:500] if text else "Aucune info trouvée."
+        "extra": None  # pas d'exposition de la sortie IA brute
     }
 
 
@@ -318,77 +335,112 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=SCRIPT_DIR, **kwargs)
 
     def do_OPTIONS(self):
-        self.send_response(200)
-        self._cors()
-        self.end_headers()
+        self.send_response(204)
+        self.end_headers()  # CORS posé dans end_headers()
 
     def do_GET(self):
-        # Endpoint santé léger (utilisé par le cron keep-alive + warm-up au chargement)
+        # Endpoint santé léger (cron keep-alive + warm-up au chargement)
         if self.path in ("/health", "/api/health"):
             return self._resp({"ok": True})
-        # "/" → sert directement l'app (index.html = le générateur)
-        return super().do_GET()
+        # Allowlist stricte : ne sert QUE l'app, jamais le code source / secrets
+        rel = self.path.split("?", 1)[0].lstrip("/")
+        if rel == "":
+            # "/" → l'app (index.html en prod, script-generator.html en dev)
+            for f in ("index.html", "script-generator.html"):
+                if os.path.isfile(os.path.join(SCRIPT_DIR, f)):
+                    rel = f
+                    break
+        if rel in PUBLIC_FILES and os.path.isfile(os.path.join(SCRIPT_DIR, rel)):
+            self.path = "/" + rel
+            return super().do_GET()
+        return self._resp({"error": "Not found"}, 404)
+
+    def _read_json_body(self):
+        """Lit + parse le body POST avec garde-fous (taille, format)."""
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+        except (TypeError, ValueError):
+            return None, (400, "Requête invalide.")
+        if length <= 0:
+            return None, (400, "Corps de requête vide.")
+        if length > MAX_BODY:
+            return None, (413, "Requête trop volumineuse.")
+        try:
+            raw = self.rfile.read(length)
+            return json.loads(raw), None
+        except (json.JSONDecodeError, ValueError):
+            return None, (400, "JSON invalide.")
 
     def do_POST(self):
-        if self.path in ("/api/research", "/api/candidates", "/api/script"):
-            try:
-                length = int(self.headers.get("Content-Length", 0))
-                body = json.loads(self.rfile.read(length))
+        if self.path not in ("/api/research", "/api/candidates", "/api/script"):
+            return self._resp({"error": "Not found"}, 404)
 
-                api_key = (body.get("api_key") or "").strip() \
-                          or os.environ.get("GROQ_API_KEY", "")
-                if not api_key:
-                    return self._resp({"error": "Clé API Groq manquante. Clique sur ⚙️ — clé gratuite sur console.groq.com"}, 400)
+        body, err = self._read_json_body()
+        if err:
+            return self._resp({"error": err[1]}, err[0])
 
-                # /api/script — génère le script (pas besoin de "partner" séparé)
-                if self.path == "/api/script":
-                    result = call_script(body, api_key)
-                    return self._resp(result)
+        # En prod la clé vient de l'env ; le body ne peut PAS injecter une clé tierce.
+        api_key = os.environ.get("GROQ_API_KEY", "") or (body.get("api_key") or "").strip()
+        if not api_key:
+            return self._resp({"error": "Service non configuré (clé API manquante côté serveur)."}, 503)
 
-                partner = (body.get("partner") or "").strip()
-                city    = (body.get("city")    or "").strip()
-                if not partner:
-                    return self._resp({"error": "Nom du partenaire manquant."}, 400)
+        try:
+            if self.path == "/api/script":
+                return self._resp(call_script(body, api_key))
 
-                if self.path == "/api/candidates":
-                    candidates = find_candidates(partner, api_key)
-                    self._resp({"candidates": candidates})
-                else:
-                    result = call_research(partner, city, api_key)
-                    self._resp(result)
+            partner = clip((body.get("partner") or "").strip(), 120)
+            city    = clip((body.get("city") or "").strip(), 60)
+            if not partner:
+                return self._resp({"error": "Nom du partenaire manquant."}, 400)
 
-            except Exception as e:
-                err = str(e)
-                if "401" in err or "invalid_api_key" in err.lower() or "authentication" in err.lower():
-                    self._resp({"error": "Clé API invalide. Vérifie sur console.groq.com"}, 401)
-                else:
-                    self._resp({"error": err[:300]}, 500)
-        else:
-            self.send_error(404)
+            if self.path == "/api/candidates":
+                return self._resp({"candidates": find_candidates(partner, api_key)})
+            return self._resp(call_research(partner, city, api_key))
+
+        except Exception as e:
+            err = str(e)
+            log_err(f"{self.path}: {err}\n{traceback.format_exc()}")
+            low = err.lower()
+            if "401" in err or "invalid_api_key" in low or "authentication" in low:
+                return self._resp({"error": "Clé API invalide côté serveur."}, 502)
+            if "timeout" in low or "timed out" in low:
+                return self._resp({"error": "Le service IA met trop de temps. Réessaie."}, 504)
+            return self._resp({"error": "Erreur serveur, réessaie dans un instant."}, 500)
 
     def _resp(self, data, status=200):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
-        self._cors()
         self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", len(body))
+        self.send_header("Content-Length", str(len(body)))
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
-    def _cors(self):
+    def end_headers(self):
+        # En-têtes CORS posés à un SEUL endroit (évite le doublon Allow-Origin)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
-
-    def end_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("X-Content-Type-Options", "nosniff")
         super().end_headers()
 
     def log_message(self, *_):
-        pass
+        pass  # 200 silencieux ; les erreurs passent par log_err()
 
 
 if __name__ == "__main__":
+    try:
+        import groq  # noqa: F401  — fail-fast si la lib manque
+    except ImportError:
+        log_err("Dépendance 'groq' absente. Lance: pip install -r requirements.txt")
+        sys.exit(1)
+    if not os.environ.get("GROQ_API_KEY"):
+        log_err("GROQ_API_KEY non définie — les endpoints IA renverront 503.")
     server = http.server.ThreadingHTTPServer(("", PORT), Handler)
-    print(f"✅ Klub research server → http://localhost:{PORT}/script-generator.html")
-    server.serve_forever()
+    print(f"✅ Klub research server → http://localhost:{PORT}/", flush=True)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        server.shutdown()
