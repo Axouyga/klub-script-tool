@@ -363,6 +363,8 @@
   .inspo-tab.active { background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
   .inspo-body { max-height:58vh; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding-right:4px; }
   .inspo-group-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#88aaff; margin-bottom:2px; }
+  .inspo-src-link { font-size:10px; font-weight:700; color:var(--pink); text-decoration:none; text-transform:none; letter-spacing:0; margin-left:6px; opacity:0.9; }
+  .inspo-src-link:hover { text-decoration:underline; opacity:1; }
   .inspo-card { border:1px solid #2a2a2a; border-radius:10px; padding:11px 13px; }
   .inspo-card.gold { border-left:3px solid #ffd700; }
   .inspo-card.pink { border-left:3px solid var(--pink); }
@@ -1034,25 +1036,25 @@ const INSPO = {
       { line: 'Ces frites… franchement, regarde.', perf: '515K', src: 'Klub Nantes', why: 'Sensoriel : on démarre sur le visuel gourmand, gros plan dégoulinant.' },
       { line: 'Ton taco, il est offert avec Klub. Je te montre.', perf: 'conversion', src: 'Klub Toulouse', why: 'Offre directe d\'emblée. Convertit, idéal sur partenaire food.' },
     ]},
-    { group: '🔵 LE GUIDE ULTIME — Paris (344K abo · 13,4M likes)', items: [
+    { group: '🔵 LE GUIDE ULTIME — Paris (344K abo · 13,4M likes)', link: 'https://www.tiktok.com/@leguideultime', items: [
       { line: 'Ce plat de ouf, il est à [X]€.', perf: '6M', src: 'Le Guide Ultime', why: 'Plat signature gros plan + le PRIX dans le hook. Leur recette n°1.' },
       { line: 'Le [burger/kebab…] le moins cher de [ville], c\'est ici.', perf: '1,4M', src: 'Le Guide Ultime', why: 'Superlatif PRIX. "Le moins cher" = aimant à clics sur le créneau.' },
       { line: 'Un [produit] à 3€ ?! Mais où ?', perf: '1,7M', src: 'Le Guide Ultime', why: 'Prix dérisoire + question. Le chiffre fait tout le travail.' },
       { line: 'Des baos. (texte 2 mots, visuel plein cadre)', perf: '2,8M', src: 'Le Guide Ultime', why: 'Accroche minuscule 2-3 mots, ne révèle rien, le visuel porte la vue.' },
     ]},
-    { group: '🟠 COMPASS — Aix/Marseille (47K abo · 980K likes)', items: [
+    { group: '🟠 COMPASS — Aix/Marseille (47K abo · 980K likes)', link: 'https://www.tiktok.com/@compass.aixmarseille', items: [
       { line: 'Le + gros tacos de [ville].', perf: '982K', src: 'Compass', why: 'Superlatif "le + gros/grand" + géo. Démesure = scroll-stop.' },
       { line: 'Les meilleurs burgers de [ville] (nos 3 adresses).', perf: '441K', src: 'Compass', why: 'Listicle curaté "nos adresses" = autorité de guide local.' },
       { line: 'Nos meilleurs endroits pour un date à [ville].', perf: '423K', src: 'Compass', why: 'Occasion (date) + sélection. Sujet relationnel = fort chez -26 ans.' },
       { line: 'Ce dessert XXL pour [prix].', perf: '417K', src: 'Compass', why: 'Démesure visuelle + prix. ASMR food.' },
     ]},
-    { group: '🟢 TOURS\'N MÉDIA — Tours (42K abo · 1,1M likes)', items: [
+    { group: '🟢 TOURS\'N MÉDIA — Tours (42K abo · 1,1M likes)', link: 'https://www.tiktok.com/@toursnmedia', items: [
       { line: 'À 10 min de [ville], y\'a ce spot que personne connaît.', perf: '469K', src: 'Tours\'n Média', why: 'Distance + exclusivité. Rend une adresse périphérique désirable.' },
       { line: 'Ça vient d\'ouvrir : le plus grand [type] à volonté.', perf: '349K', src: 'Tours\'n Média', why: 'Nouveauté + superlatif. FOMO de l\'ouverture.' },
       { line: 'Un brunch à volonté pour 29€ ?', perf: '126K', src: 'Tours\'n Média', why: 'Question + prix/volonté. Le bon plan chiffré.' },
       { line: '📍 [adresse] — tu connais cet endroit ?', perf: 'signature', src: 'Tours\'n Média', why: 'Le 📍 + adresse ancre le guide local dès la 1ère seconde.' },
     ]},
-    { group: '🟡 LE BONBON — Paris (629K abo · 25M likes)', items: [
+    { group: '🟡 LE BONBON — Paris (629K abo · 25M likes)', link: 'https://www.tiktok.com/@le_bonbon', items: [
       { line: 'Chef [nom connu] débarque dans [lieu] !', perf: '4,4M', src: 'Le Bonbon', why: 'Nom propre / célébrité = accroche instantanée.' },
       { line: 'Ce lieu insolite que t\'as à [ville]…', perf: '3,6M', src: 'Le Bonbon', why: 'Insolite + hook tronqué qui ne donne pas la réponse.' },
       { line: '(Leur vrai moteur = le micro-trottoir → voir l\'onglet 🎤 MT)', src: 'Le Bonbon', why: 'En vidéo lieu/food ils plafonnent ; leur viralité vient du MT argent.' },
@@ -1070,7 +1072,7 @@ const INSPO = {
       { line: '"Où j\'ai date à [lieu toulousain] ?"', perf: '84K vues', src: 'Klub Poitiers', why: 'Sujet date = engagement fort chez les -26 ans.' },
       { line: '"C\'est qui ton sosie ?"', perf: '60K+ vues', src: 'Klub Poitiers', why: 'Fun, léger, déclenche le sourire et le partage.' },
     ]},
-    { group: '🔥 Le micro-trottoir argent = leur MOTEUR (Le Bonbon, 629K abo, 25M likes)', items: [
+    { group: '🔥 Le micro-trottoir argent = leur MOTEUR (Le Bonbon, 629K abo, 25M likes)', link: 'https://www.tiktok.com/@le_bonbon', items: [
       { line: '"Tu payes combien ?" (loyer / appart, en pleine rue)', perf: '9,2M vues', src: 'Le Bonbon', why: 'LE format le plus reproductible. Le montant = l\'accroche. Transposable : loyer étudiant.' },
       { line: '"T\'as combien ?" (budget / salaire)', perf: '6,8M vues', src: 'Le Bonbon', why: 'Tabou argent = curiosité immédiate. Adapter : budget d\'une soirée à [ville].' },
       { line: '"C\'est quoi le truc le plus débile que…" (question légère en terrasse)', perf: '5M vues', src: 'Le Bonbon', why: 'Question ouverte + fun. Réponses imprévisibles = rétention.' },
@@ -1105,7 +1107,9 @@ function switchInspoInternal(tab) {
   const body = document.getElementById('inspo-body');
   let html = '';
   data.forEach(grp => {
-    html += `<div><div class="inspo-group-title">${esc(grp.group)}</div>`;
+    const link = grp.link
+      ? ` <a href="${esc(grp.link)}" target="_blank" rel="noopener" class="inspo-src-link">voir le compte ↗</a>` : '';
+    html += `<div><div class="inspo-group-title">${esc(grp.group)}${link}</div>`;
     grp.items.forEach(it => {
       const gold = !!it.perf;
       const tags = (it.perf ? `<span class="inspo-tag tag-perf">${esc(it.perf)}</span>` : '')
@@ -1119,8 +1123,8 @@ function switchInspoInternal(tab) {
     html += `</div>`;
   });
   html += `<div class="inspo-note">${isHook
-    ? 'Toutes les vues sont réellement mesurées sur TikTok (Klub + concurrents, analyse juin 2026). Aucun chiffre inventé.'
-    : 'Vues mesurées sur TikTok. Toujours garder le micro Klub rose visible — c\'est la signature du réseau. Pour Klub, garder les questions argent fun/légères (pas trop intimes).'}</div>`;
+    ? 'Vues mesurées sur TikTok (analyse juin 2026). "Voir le compte" ↗ ouvre le TikTok source — les vidéos précises bougent dans le temps, mais tu retrouves le style sur le compte. Klub = données internes réseau.'
+    : 'Vues mesurées sur TikTok. "Voir le compte" ↗ ouvre la source. Garder le micro Klub rose (signature) ; questions argent fun/légères, pas trop intimes.'}</div>`;
   body.innerHTML = html;
 }
 
