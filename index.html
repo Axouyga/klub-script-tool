@@ -334,6 +334,8 @@
     border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #ff8080;
   }
   .research-error-banner.show { display: block; }
+  .retry-link { color: var(--pink); font-weight: 700; text-decoration: none; margin-left: 6px; }
+  .retry-link:hover { text-decoration: underline; }
 
   /* ─── CANDIDATE CARDS ─── */
   .cand-card {
@@ -909,6 +911,7 @@ const HOOKS = [
 window.addEventListener('DOMContentLoaded', () => {
   refreshLibraryCount();
   initTheme();
+  warmUp();   // réveille Render pendant que l'utilisateur remplit le formulaire
 });
 
 // ─── THÈME JOUR / NUIT ───
@@ -1242,13 +1245,39 @@ function setSearchLoading(on) {
 function clearBanners() {
   document.getElementById('research-ok').classList.remove('show');
   document.getElementById('research-err').classList.remove('show');
+  if (window._progTimer) { clearInterval(window._progTimer); window._progTimer = null; }
 }
 
-function showErr(msg) {
+// Bannière de progression animée (étapes qui défilent)
+function showProgress(steps) {
+  const el = document.getElementById('research-ok');
+  el.className = 'research-result-banner show';
+  let i = 0;
+  const tick = () => { el.innerHTML = steps[Math.min(i, steps.length - 1)]; i++; };
+  tick();
+  if (window._progTimer) clearInterval(window._progTimer);
+  window._progTimer = setInterval(tick, 2600);
+}
+
+function showErr(msg, retryFn) {
+  if (window._progTimer) { clearInterval(window._progTimer); window._progTimer = null; }
+  document.getElementById('research-ok').classList.remove('show');
   const el = document.getElementById('research-err');
-  el.textContent = '⚠ ' + msg;
+  el.innerHTML = '⚠ ' + esc(msg) + (retryFn ? ' <a href="#" class="retry-link" onclick="event.preventDefault();(' + 'window._retryFn&&window._retryFn())">↻ Réessayer</a>' : '');
+  window._retryFn = retryFn || null;
   el.classList.add('show');
 }
+
+// fetch avec timeout (cold start Render peut prendre ~50s)
+async function fetchT(url, opts, ms = 95000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  try { return await fetch(url, { ...opts, signal: ctrl.signal }); }
+  finally { clearTimeout(t); }
+}
+
+// Réveille le serveur Render dès le chargement (évite le cold start au 1er search)
+function warmUp() { fetchT(API_BASE + '/health', {}, 60000).catch(() => {}); }
 
 // ── ÉTAPE 1 : chercher les candidats par nom seul ──
 async function searchPartner() {
@@ -1259,9 +1288,15 @@ async function searchPartner() {
 
   setSearchLoading(true);
   clearBanners();
+  showProgress([
+    '🔎 Recherche du partenaire sur le web…',
+    '🌐 Lecture des sources (Maps, TripAdvisor…)…',
+    '🧠 Analyse par l\'IA…',
+    '⏳ Le serveur se réveillait, presque prêt…'
+  ]);
 
   try {
-    const res = await fetch(API_BASE + '/api/candidates', {
+    const res = await fetchT(API_BASE + '/api/candidates', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ partner: name, api_key })
@@ -1270,23 +1305,26 @@ async function searchPartner() {
 
     if (data.error) {
       if (/cl[ée] api/i.test(data.error)) openSettings();
-      showErr(data.error);
+      showErr(data.error, searchPartner);
       return;
     }
 
     const cands = data.candidates || [];
 
     if (cands.length === 0) {
-      // Rien trouvé en candidat — tente recherche directe sur le nom seul
       await doResearch(name, '');
     } else if (cands.length === 1) {
       const c = cands[0];
       await doResearch(c.name || name, c.city || '');
     } else {
-      showCandidates(cands);  // popup de sélection
+      clearBanners();
+      showCandidates(cands);
     }
   } catch (e) {
-    showErr('Serveur indisponible — relance avec python3 research_server.py');
+    const msg = (e && e.name === 'AbortError')
+      ? 'Trop long (le serveur se réveillait). Réessaie, ce sera rapide maintenant.'
+      : 'Serveur indisponible. Réessaie dans un instant.';
+    showErr(msg, searchPartner);
   } finally {
     setSearchLoading(false);
   }
@@ -1319,8 +1357,11 @@ async function pickCandidate(i) {
   if (c.city) document.getElementById('partner-city').value = c.city;
   setSearchLoading(true);
   clearBanners();
+  showProgress(['🌐 Recherche détaillée sur ' + (c.name || 'l\'établissement') + '…', '🧠 Analyse par l\'IA…']);
   try {
     await doResearch(c.name, c.city || '');
+  } catch (e) {
+    showErr('Échec de la recherche. Réessaie.', () => pickCandidate(i));
   } finally {
     setSearchLoading(false);
   }
@@ -1334,17 +1375,20 @@ function closeCandidatesOutside(e) {
 }
 
 // ── ÉTAPE 2 : recherche détaillée sur l'établissement choisi ──
+function stopProgress() { if (window._progTimer) { clearInterval(window._progTimer); window._progTimer = null; } }
+
 async function doResearch(name, city) {
   const api_key = getApiKey();
-  clearBanners();
-  const res = await fetch(API_BASE + '/api/research', {
+  // garde la bannière de progression active pendant la recherche détaillée
+  const res = await fetchT(API_BASE + '/api/research', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ partner: name, city, api_key })
   });
   const data = await res.json();
+  stopProgress();
 
-  if (data.error) { showErr(data.error); return; }
+  if (data.error) { showErr(data.error, () => doResearch(name, city)); return; }
 
   prefillFields(data);
   const SKIP = ['_source'];
@@ -1356,8 +1400,8 @@ async function doResearch(name, city) {
     showErr('Aucune info exploitable trouvée. Remplis manuellement.');
   } else {
     const ok = document.getElementById('research-ok');
+    ok.className = 'research-result-banner show';
     ok.innerHTML = `✅ <strong>${filled} champ${filled>1?'s':''} rempli${filled>1?'s':''}</strong> via ${src}. Vérifie et complète si besoin.`;
-    ok.classList.add('show');
   }
 }
 
@@ -1485,7 +1529,7 @@ async function generateScript() {
 
   const api_key = getApiKey();  // peut être vide → serveur utilise sa clé env
   try {
-    const res = await fetch(API_BASE + '/api/script', {
+    const res = await fetchT(API_BASE + '/api/script', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, cat, city, address, unique, extra,

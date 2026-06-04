@@ -1,0 +1,23 @@
+name: keep-alive
+
+# Garde le service Render réveillé (free tier dort après 15 min d'inactivité).
+# Ping /health toutes les ~13 min → pas de cold start pour Lucas.
+
+on:
+  schedule:
+    - cron: "*/13 * * * *"   # toutes les 13 minutes
+  workflow_dispatch: {}        # déclenchable à la main aussi
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render /health
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://klub-script-tool.onrender.com/health) || code=000
+            echo "tentative $i → HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          echo "warm-up déclenché (le service se réveillait)"; exit 0

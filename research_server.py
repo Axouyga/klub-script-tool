@@ -322,6 +322,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self._cors()
         self.end_headers()
 
+    def do_GET(self):
+        # Endpoint santé léger (utilisé par le cron keep-alive + warm-up au chargement)
+        if self.path in ("/health", "/api/health"):
+            return self._resp({"ok": True})
+        # "/" → sert directement l'app (index.html = le générateur)
+        return super().do_GET()
+
     def do_POST(self):
         if self.path in ("/api/research", "/api/candidates", "/api/script"):
             try:
