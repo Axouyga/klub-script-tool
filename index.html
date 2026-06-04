@@ -198,6 +198,13 @@
   .seg-text:empty:before { content: attr(data-placeholder); color: #6a5a30; font-style: italic; }
   .seg-shoot .seg-text { min-height: 40px; color: #e8c97a; }
 
+  /* Hook variants */
+  .hook-variants { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .hv-label { width: 100%; font-size: 10px; color: var(--text-muted); margin-bottom: 1px; }
+  .hv-chip { font-size: 12px; line-height: 1.3; padding: 5px 10px; border-radius: 14px; border: 1px solid #3a2030; background: #1a1015; color: #ffaecb; cursor: pointer; transition: all 0.15s; }
+  .hv-chip:hover { border-color: var(--pink); background: var(--pink-dim); color: #fff; }
+  .hv-chip.active { background: var(--pink); border-color: var(--pink); color: #fff; }
+
   .script-plain { display: none; padding: 20px; font-size: 13px; line-height: 1.7; white-space: pre-wrap; color: var(--text); }
 
   .view-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
@@ -843,27 +850,39 @@ function deleteSavedScript(i, e) {
 // ─── INSPIRATION : top hooks + questions MT ───
 const INSPO = {
   hooks: [
-    { group: '🏆 Mesurés sur le réseau Klub', items: [
-      { line: 'Face cam authentique — quelqu\'un parle direct caméra, ambiance perso, hook intrigant', perf: '574K vues', src: 'Klub La Rochelle', why: 'L\'algo adore la rétention. Pas de prod léchée, juste du vrai = top all-time du réseau.' },
-      { line: 'Description sensorielle en ouverture — gros plan appétissant + texte court ("…sont faites")', perf: '515K vues', src: 'Klub Nantes', why: 'On démarre sur le visuel/gourmand avant d\'expliquer le lieu.' },
-      { line: 'POV bouffe / main qui prend ("Des burgers…")', perf: '483K vues', src: 'Klub Nantes', why: 'Action de la main + plat appétissant, slow-mo de la sauce.' },
-      { line: 'Superlatif géo — "Sans doute la pizzeria avec la plus belle vue de [ville]"', perf: 'signature Bellini', src: 'Klub Toulouse', why: 'Claim fort et vérifiable à l\'image. Court, percutant.' },
-      { line: 'Concept unique = le hook — "tout se mange avec les doigts"', perf: '256K vues', src: 'Klub LR (Finger\'s)', why: 'On prend LA spécificité du lieu et on en fait l\'accroche.' },
-      { line: 'Offre directe en hook — "Ton taco c\'est offert place [X] avec Klub, on te montre comment"', perf: 'fort en conversion', src: 'Klub Toulouse', why: 'La valeur d\'emblée. Moins viral mais convertit.' },
+    { group: '🟣 KLUB — réseau (vues mesurées)', items: [
+      { line: 'Sans doute la meilleure [pizzeria/terrasse…] de [ville].', perf: 'signature 574K+', src: 'Klub', why: 'Superlatif géo crédible, vérifiable à l\'image. Démarrage ultra-fort.' },
+      { line: 'Tu manges TOUT avec les doigts ici.', perf: '256K', src: 'Klub LR', why: 'Concept unique du lieu = le hook. On part de la spécificité.' },
+      { line: 'Ces frites… franchement, regarde.', perf: '515K', src: 'Klub Nantes', why: 'Sensoriel : on démarre sur le visuel gourmand, gros plan dégoulinant.' },
+      { line: 'Ton taco, il est offert avec Klub. Je te montre.', perf: 'conversion', src: 'Klub Toulouse', why: 'Offre directe d\'emblée. Convertit, idéal sur partenaire food.' },
     ]},
-    { group: '🔥 Mesurés chez les concurrents (TikTok, analysé juin 2026)', items: [
-      { line: 'Plat signature en gros plan + texte 2-3 mots minuscules — "plats de ouf", "des baos"', perf: '6M / 2,8M vues', src: 'Le Guide Ultime · Paris (344K abo, 13,4M likes)', why: 'Food porn close-up. Le texte révèle rien, le visuel mange tout le cadre.' },
-      { line: 'Prix bas en GROS chiffre jaune — "5 €", "3€", "le moins cher"', perf: '1,9M / 1,7M / 1,4M', src: 'Le Guide Ultime', why: 'Le bon plan prix = leur hook le plus fort après le visuel. Exactement le créneau Klub.' },
-      { line: 'Superlatif + géo — "Le + gros tacos", "Les meilleurs burgers à Marseille"', perf: '982K / 441K', src: 'Compass · Aix-Mrs (47K abo)', why: 'Formule "[le meilleur / le + gros] X à [ville]" omniprésente dans leurs tops.' },
-      { line: 'Listicle curaté — "NOS 2 bonnes adresses hot-dog", "NOS meilleurs endroits pour dater"', perf: '423K vues', src: 'Compass', why: '"Nos adresses" = autorité de guide local, promesse de sélection.' },
-      { line: 'Distance depuis la ville — "à 10 min de Tours" + 📍 adresse précise', perf: '469K vues', src: 'Tours\'n Média · Tours (42K abo)', why: 'Rend une adresse périphérique attractive. Le 📍 ancre le guide local dès la 1ère sec.' },
-      { line: 'Ouverture / nouveauté — "OUVERTURE DEMAIN, le plus grand resto à volonté"', perf: '349K vues', src: 'Tours\'n Média', why: 'L\'angle "premier / plus grand / vient d\'ouvrir" cartonne. FOMO réel.' },
-      { line: 'Prix choc extrême — "80€" (pizza luxe) ou "pour - de 10€"', perf: '264K / 510K', src: 'Compass', why: 'Les 2 extrêmes du prix (dérisoire OU démesuré) stoppent le scroll.' },
+    { group: '🔵 LE GUIDE ULTIME — Paris (344K abo · 13,4M likes)', items: [
+      { line: 'Ce plat de ouf, il est à [X]€.', perf: '6M', src: 'Le Guide Ultime', why: 'Plat signature gros plan + le PRIX dans le hook. Leur recette n°1.' },
+      { line: 'Le [burger/kebab…] le moins cher de [ville], c\'est ici.', perf: '1,4M', src: 'Le Guide Ultime', why: 'Superlatif PRIX. "Le moins cher" = aimant à clics sur le créneau.' },
+      { line: 'Un [produit] à 3€ ?! Mais où ?', perf: '1,7M', src: 'Le Guide Ultime', why: 'Prix dérisoire + question. Le chiffre fait tout le travail.' },
+      { line: 'Des baos. (texte 2 mots, visuel plein cadre)', perf: '2,8M', src: 'Le Guide Ultime', why: 'Accroche minuscule 2-3 mots, ne révèle rien, le visuel porte la vue.' },
     ]},
-    { group: '💡 Synthèse — ce qui marche sur TOUS les comptes', items: [
-      { line: 'Prix en gros chiffre sur la vignette (bas surtout) = déclencheur n°1 du créneau bons plans', src: 'commun aux 4 comptes', why: 'Le Guide Ultime, Compass, Tours\'n Média capitalisent tous sur le prix affiché en gros.' },
-      { line: 'Accroche ultra-courte (2-3 mots, minuscules, ton parlé) — jamais la phrase complète', src: 'commun', why: 'Crée la curiosité sans tout révéler. "des baos", "Y\'a un nouveau".' },
-      { line: 'Food porn close-up : produit dégoulinant / XXL plein cadre, son ASMR', src: 'commun', why: 'Quand c\'est food, le visuel porte la vue, le texte reste minimal.' },
+    { group: '🟠 COMPASS — Aix/Marseille (47K abo · 980K likes)', items: [
+      { line: 'Le + gros tacos de [ville].', perf: '982K', src: 'Compass', why: 'Superlatif "le + gros/grand" + géo. Démesure = scroll-stop.' },
+      { line: 'Les meilleurs burgers de [ville] (nos 3 adresses).', perf: '441K', src: 'Compass', why: 'Listicle curaté "nos adresses" = autorité de guide local.' },
+      { line: 'Nos meilleurs endroits pour un date à [ville].', perf: '423K', src: 'Compass', why: 'Occasion (date) + sélection. Sujet relationnel = fort chez -26 ans.' },
+      { line: 'Ce dessert XXL pour [prix].', perf: '417K', src: 'Compass', why: 'Démesure visuelle + prix. ASMR food.' },
+    ]},
+    { group: '🟢 TOURS\'N MÉDIA — Tours (42K abo · 1,1M likes)', items: [
+      { line: 'À 10 min de [ville], y\'a ce spot que personne connaît.', perf: '469K', src: 'Tours\'n Média', why: 'Distance + exclusivité. Rend une adresse périphérique désirable.' },
+      { line: 'Ça vient d\'ouvrir : le plus grand [type] à volonté.', perf: '349K', src: 'Tours\'n Média', why: 'Nouveauté + superlatif. FOMO de l\'ouverture.' },
+      { line: 'Un brunch à volonté pour 29€ ?', perf: '126K', src: 'Tours\'n Média', why: 'Question + prix/volonté. Le bon plan chiffré.' },
+      { line: '📍 [adresse] — tu connais cet endroit ?', perf: 'signature', src: 'Tours\'n Média', why: 'Le 📍 + adresse ancre le guide local dès la 1ère seconde.' },
+    ]},
+    { group: '🟡 LE BONBON — Paris (629K abo · 25M likes)', items: [
+      { line: 'Chef [nom connu] débarque dans [lieu] !', perf: '4,4M', src: 'Le Bonbon', why: 'Nom propre / célébrité = accroche instantanée.' },
+      { line: 'Ce lieu insolite que t\'as à [ville]…', perf: '3,6M', src: 'Le Bonbon', why: 'Insolite + hook tronqué qui ne donne pas la réponse.' },
+      { line: '(Leur vrai moteur = le micro-trottoir → voir l\'onglet 🎤 MT)', src: 'Le Bonbon', why: 'En vidéo lieu/food ils plafonnent ; leur viralité vient du MT argent.' },
+    ]},
+    { group: '💡 LA RÈGLE D\'OR (commun aux 5)', items: [
+      { line: 'Si bon plan prix → mets le PRIX dans le hook ("à 3€", "le moins cher").', src: 'synthèse', why: 'Déclencheur n°1 du créneau. Le chiffre arrête le scroll mieux que tout.' },
+      { line: 'Sinon → superlatif géo ("le meilleur/+ gros X de [ville]") ou concept unique.', src: 'synthèse', why: 'Les 2 angles les plus réguliers après le prix.' },
+      { line: 'Hook court (< 8 mots), oral, ne révèle jamais tout. Action visuelle dès la 1ère sec.', src: 'synthèse', why: 'Format commun à tous les tops analysés.' },
     ]},
   ],
   mt: [
@@ -1287,6 +1306,7 @@ async function generateScript() {
 
   setGenLoading(true);
   let segments = null;
+  window._hookVariants = [];
 
   const api_key = getApiKey();  // peut être vide → serveur utilise sa clé env
   try {
@@ -1300,6 +1320,7 @@ async function generateScript() {
     const data = await res.json();
     if (data.segments && data.segments.length) {
       segments = enrichSegments(data.segments);
+      window._hookVariants = Array.isArray(data.hook_variants) ? data.hook_variants.filter(Boolean) : [];
     }
   } catch (e) { /* fallback templates ci-dessous */ }
 
@@ -1607,8 +1628,18 @@ function renderOutput(segments, meta) {
   window._scriptMeta = meta;
 
   // Structured view — chaque ligne est éditable
+  const variants = window._hookVariants || [];
   const structEl = document.getElementById('script-structured');
-  structEl.innerHTML = segments.map((s, i) => `
+  structEl.innerHTML = segments.map((s, i) => {
+    let chips = '';
+    // Sous le hook : chips d'accroches alternatives cliquables
+    if (s.type === 'hook' && variants.length > 1) {
+      chips = `<div class="hook-variants">
+        <div class="hv-label">↻ Autres accroches (clique pour remplacer) :</div>
+        ${variants.map(v => `<span class="hv-chip" onclick="useHookVariant(${i}, this)" data-h="${esc(v)}">${esc(v)}</span>`).join('')}
+      </div>`;
+    }
+    return `
     <div class="script-segment seg-${s.type}">
       <div class="seg-time">${s.time}</div>
       <div style="flex:1">
@@ -1616,9 +1647,10 @@ function renderOutput(segments, meta) {
         <div class="seg-text" contenteditable="true" data-i="${i}"
              oninput="onSegEdit(${i}, this)"
              ${s.placeholder ? `data-placeholder="Liste ici les produits commandés / filmés (ex: pizza burrata, spritz, tiramisu…)"` : ''}>${esc(s.text)}</div>
+        ${chips}
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 
   refreshPlainAndCount();
 
@@ -1630,6 +1662,21 @@ function renderOutput(segments, meta) {
 function onSegEdit(i, el) {
   if (window._scriptSegments && window._scriptSegments[i]) {
     window._scriptSegments[i].text = el.textContent;
+  }
+  refreshPlainAndCount();
+}
+
+// Remplace le hook par l'accroche alternative cliquée
+function useHookVariant(i, el) {
+  const h = el.getAttribute('data-h') || '';
+  if (!window._scriptSegments || !window._scriptSegments[i]) return;
+  window._scriptSegments[i].text = h;
+  const row = document.querySelectorAll('#script-structured .script-segment')[i];
+  if (row) {
+    const txt = row.querySelector('.seg-text');
+    if (txt) txt.textContent = h;
+    row.querySelectorAll('.hv-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
   }
   refreshPlainAndCount();
 }

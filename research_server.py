@@ -80,14 +80,16 @@ RÈGLES ABSOLUES :
 
 Tu retournes UNIQUEMENT un JSON valide :
 {
+  "hook_variants": ["hook 1 (< 8 mots, le + fort)", "hook 2 (autre angle)", "hook 3 (autre angle)"],
   "segments": [
-    {"label": "Hook", "text": "..."},
+    {"label": "Hook", "text": "le meilleur des 3 hooks ci-dessus"},
     {"label": "Découverte / concept", "text": "..."},
     {"label": "Produits / expérience", "text": "..."},
     {"label": "Offre Klub", "text": "..."},
     {"label": "CTA", "text": "..."}
   ]
 }
+"hook_variants" = 3 accroches DIFFÉRENTES et fortes pour la 1ère seconde, chacune < 8 mots, ton oral, angles variés (prix / superlatif géo / concept). Le 1er = le meilleur, et c'est lui qui ouvre "segments".
 Adapte le nombre de segments à la durée (15s = 3 segments max, 60s = 5). Aucun texte hors du JSON."""
 
 
