@@ -133,6 +133,8 @@
   .offer-type-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
   .offer-block.unique .offer-type-label { color: var(--pink); }
   .offer-block.permanente .offer-type-label { color: var(--green); }
+  .offer-ai-hint { font-size: 10.5px; color: var(--accent); margin-top: 5px; display: none; opacity: 0.9; }
+  .offer-ai-hint.show { display: block; }
 
   /* ─── PILL SELECTORS ─── */
   .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
@@ -407,6 +409,7 @@
   body.light .btn-copy:hover { border-color:var(--pink); color:var(--pink); }
   body.light .wc-bar-fill-wrap { background:rgba(20,12,30,0.08); }
   body.light .wc-target { color:#9890a3; }
+  body.light .offer-ai-hint { color: #0a8fa0; }
   body.light .lib-card, body.light .cand-card, body.light .inspo-card { border-color:var(--card-border); }
   body.light .lib-card:hover, body.light .cand-card:hover { background:var(--pink-dim); }
   body.light .lib-del { border-color:#e3b3b3; color:#c0392b; }
@@ -611,7 +614,8 @@
         <div class="form-row">
           <div class="form-group">
             <label>Ce que le membre reçoit</label>
-            <input type="text" id="offer-unique-what" maxlength="160" placeholder="ex: 1 pizza achetée = 1 pizza offerte">
+            <input type="text" id="offer-unique-what" maxlength="160" placeholder="ex: 1 pizza achetée = 1 pizza offerte" oninput="clearAiHint('unique')">
+            <div class="offer-ai-hint" id="ai-hint-unique">✨ Proposition IA — adapte selon le contrat partenaire</div>
           </div>
           <div class="form-group">
             <label>Conditions (facultatif)</label>
@@ -625,7 +629,8 @@
         <div class="form-row">
           <div class="form-group">
             <label>Ce que le membre reçoit</label>
-            <input type="text" id="offer-perm-what" maxlength="160" placeholder="ex: 1 pinte achetée = 1 pinte offerte de 20h à 22h">
+            <input type="text" id="offer-perm-what" maxlength="160" placeholder="ex: 1 pinte achetée = 1 pinte offerte de 20h à 22h" oninput="clearAiHint('perm')">
+            <div class="offer-ai-hint" id="ai-hint-perm">✨ Proposition IA — adapte selon le contrat partenaire</div>
           </div>
           <div class="form-group">
             <label>Conditions (facultatif)</label>
@@ -1205,8 +1210,9 @@ async function doResearch(name, city) {
     showErr('Aucune info exploitable trouvée. Remplis manuellement.');
   } else {
     const ok = document.getElementById('research-ok');
+    const hasOffers = data.offer_unique_suggestion || data.offer_perm_suggestion;
     ok.className = 'research-result-banner show';
-    ok.innerHTML = `✅ <strong>${filled} champ${filled>1?'s':''} rempli${filled>1?'s':''}</strong> via ${src}. Vérifie et complète si besoin.`;
+    ok.innerHTML = `✅ <strong>${filled} champ${filled>1?'s':''} rempli${filled>1?'s':''}</strong> via ${src}${hasOffers ? ' · 💡 offres suggérées à l\'étape 2' : ''}. Vérifie et complète si besoin.`;
   }
 }
 
@@ -1254,6 +1260,33 @@ function prefillFields(data) {
     document.getElementById('partner-extra').value = extraParts.join('\n');
     flash('partner-extra');
   }
+
+  // Offres suggérées — ne remplace que si les champs sont vides
+  if (data.offer_unique_suggestion) {
+    const el = document.getElementById('offer-unique-what');
+    if (!el.value) {
+      el.value = data.offer_unique_suggestion;
+      flash('offer-unique-what');
+      showAiHint('unique');
+    }
+  }
+  if (data.offer_perm_suggestion) {
+    const el = document.getElementById('offer-perm-what');
+    if (!el.value) {
+      el.value = data.offer_perm_suggestion;
+      flash('offer-perm-what');
+      showAiHint('perm');
+    }
+  }
+}
+
+function showAiHint(type) {
+  const el = document.getElementById('ai-hint-' + type);
+  if (el) el.classList.add('show');
+}
+function clearAiHint(type) {
+  const el = document.getElementById('ai-hint-' + type);
+  if (el) el.classList.remove('show');
 }
 
 // ─── SCRIPT GENERATION ───
@@ -1697,6 +1730,8 @@ function resetAll() {
   document.getElementById('offer-unique-cond').value = '';
   document.getElementById('offer-perm-what').value = '';
   document.getElementById('offer-perm-cond').value = '';
+  clearAiHint('unique');
+  clearAiHint('perm');
   ['step1','step2','step3'].forEach(id => {
     const c = document.getElementById(id);
     if (!c) return;

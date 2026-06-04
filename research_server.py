@@ -50,14 +50,17 @@ JSON attendu :
   "specialties": "Les 2-3 spécialités ou produits phares mentionnés dans les sources",
   "ambiance": "Ambiance, style, type de clientèle, décor — basé sur les sources",
   "price": "Fourchette de prix mentionnée dans les sources",
-  "extra": "Infos utiles pour un script : capacité, durée, concept, anecdote fondateurs, point fort vs concurrents"
+  "extra": "Infos utiles pour un script : capacité, durée, concept, anecdote fondateurs, point fort vs concurrents",
+  "offer_unique_suggestion": "Propose une offre unique Klub (utilisable 1×/an). Format Klub typique : '1 [produit phare] acheté = 1 [produit phare] offert' ou '[X]% de réduction sur [catégorie produit]'. Basée sur les spécialités et le type d'établissement. Exemples par catégorie : restaurant→'1 plat acheté = 1 plat offert', bar→'1 pinte achetée = 1 pinte offerte', boutique→'-20% sur toute la boutique', sport→'1 séance découverte offerte', loisir→'1 place offerte à partir de 4 personnes', beaute→'1 soin offert (valeur 30€)'.",
+  "offer_perm_suggestion": "Propose une offre permanente Klub (illimitée toute l'année). Format : '-[X]% sur [catégorie]' ou '1 [boisson/produit] achetée = 1 offerte (horaires)'. Réaliste pour un partenariat commercial. Exemples : bar→'1 pinte à 3€ de 20h à 22h', restaurant→'-10% sur l'addition', boutique→'-10% toute l'année', cafe→'-10% sur toutes les boissons', sport→'-10% sur l'abonnement mensuel'."
 }
 
 RÈGLES STRICTES :
 - Base-toi UNIQUEMENT sur les sources fournies — ne hallucine PAS
 - ADRESSE : cherche attentivement dans les titres ET les URLs (souvent au format "9 Place du Capitole, 31000 Toulouse"). Extrais le numéro + rue + code postal si présent.
-- Si une info n'est PAS dans les sources → null pour ce champ
+- Si une info n'est PAS dans les sources → null pour ce champ (sauf offer_unique_suggestion et offer_perm_suggestion)
 - Le champ "unique" doit être un vrai hook vidéo basé sur les faits trouvés
+- Pour "offer_unique_suggestion" et "offer_perm_suggestion" : propose toujours une suggestion réaliste basée sur la catégorie et les spécialités trouvées — ces champs ne doivent jamais être null
 - Réponds UNIQUEMENT le JSON, aucun texte avant ou après"""
 
 
