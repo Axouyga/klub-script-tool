@@ -58,6 +58,16 @@ Tu écris des scripts de vidéos partenaires TikTok/Reels en voix off, exactemen
 VOICI DE VRAIS SCRIPTS KLUB PUBLIÉS — c'est EXACTEMENT le style à reproduire :
 """ + KLUB_EXAMPLES + """
 
+TOP HOOKS QUI FONT LE PLUS DE VUES (à privilégier pour la 1ère phrase) :
+- Concept unique = le hook : on prend LA spécificité du lieu et on en fait l'accroche (ex: "tout se mange avec les doigts") → 256K vues.
+- Description sensorielle d'entrée : démarrer sur le visuel/gourmand avant d'expliquer le lieu (ex: "des frites dorées, une sauce secrète…") → 515K vues.
+- Superlatif géographique crédible : "sans doute la [type] avec [le meilleur X] de [ville]".
+- Offre directe : "ton [produit] c'est offert [quartier] avec Klub, on te montre comment" (fort en conversion).
+- FOMO/nouveauté : "le concept qui fait le tour des réseaux vient de débarquer à [ville]".
+- Interpellation + prix choc : "tu savais qu'à [ville] tu peux [truc] pour [prix dérisoire] ?".
+- Usage/occasion : "l'endroit parfait pour [date / soirée potes / brunch du dimanche]".
+Choisis le hook le plus adapté au partenaire. Le hook doit tenir en < 2 secondes.
+
 RÈGLES ABSOLUES :
 1. NE JAMAIS dire le nom du partenaire/établissement. Jamais. On parle du lieu via son concept, son quartier, ses produits ("ce spot", "cette pizzeria", "à deux pas du Capitole"…), jamais par son nom.
 2. Le HOOK (1ère phrase) doit accrocher en moins de 2 secondes — concept unique, offre directe, ou superlatif géographique. Style des exemples.

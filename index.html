@@ -302,6 +302,25 @@
   .lib-del { background:transparent; border:1px solid #3a2020; color:#a55; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; transition:all 0.15s; flex-shrink:0; }
   .lib-del:hover { background:#2a1212; border-color:#a55; color:#f77; }
   .lib-empty { text-align:center; color:#555; font-size:13px; padding:30px 0; }
+
+  /* ─── INSPIRATION ─── */
+  .inspo-tabs { display:flex; gap:6px; margin:14px 0; }
+  .inspo-tab { flex:1; padding:8px 10px; border-radius:8px; border:1px solid #333; background:transparent; color:var(--text-muted); font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; }
+  .inspo-tab.active { background:var(--pink-dim); border-color:var(--pink); color:var(--pink); }
+  .inspo-body { max-height:58vh; overflow-y:auto; display:flex; flex-direction:column; gap:14px; padding-right:4px; }
+  .inspo-group-title { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#88aaff; margin-bottom:2px; }
+  .inspo-card { border:1px solid #2a2a2a; border-radius:10px; padding:11px 13px; }
+  .inspo-card.gold { border-left:3px solid #ffd700; }
+  .inspo-card.pink { border-left:3px solid var(--pink); }
+  .inspo-line { font-size:13px; line-height:1.45; }
+  .inspo-line b { color:var(--text); }
+  .inspo-tag { display:inline-block; font-size:10px; font-weight:800; padding:2px 7px; border-radius:5px; margin-left:6px; }
+  .tag-perf { background:rgba(255,215,0,.12); color:#ffd700; }
+  .tag-src { background:#1e1e2e; color:#88aaff; }
+  .inspo-why { font-size:11px; color:var(--text-muted); margin-top:5px; }
+  .inspo-copy { margin-top:7px; font-size:11px; color:var(--pink); cursor:pointer; user-select:none; display:inline-block; }
+  .inspo-copy:hover { text-decoration:underline; }
+  .inspo-note { font-size:11px; color:#555; font-style:italic; padding:4px 2px; }
 </style>
 </head>
 <body>
@@ -314,6 +333,9 @@
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
+    <button class="settings-btn" onclick="openInspo()" title="Top hooks & questions MT" style="font-size:13px;padding:6px 12px;">
+      💡 Inspiration
+    </button>
     <button class="settings-btn" onclick="openLibrary()" title="Mes scripts enregistrés" style="font-size:13px;padding:6px 12px;display:flex;align-items:center;gap:6px">
       📁 Mes scripts <span id="lib-count" style="background:var(--pink);color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:1px 7px;display:none">0</span>
     </button>
@@ -356,6 +378,19 @@
       <button class="btn-modal-save" onclick="saveApiKey()">Enregistrer</button>
       <button class="btn-modal-cancel" onclick="closeSettings()">Annuler</button>
     </div>
+  </div>
+</div>
+
+<!-- ─── INSPIRATION MODAL ─── -->
+<div class="modal-overlay" id="inspo-overlay" onclick="closeInspoOutside(event)">
+  <div class="modal" style="width:640px">
+    <div class="modal-title">💡 Top hooks & questions MT</div>
+    <div class="modal-sub">Ce qui génère le plus de vues sur le créneau bons plans -26 ans (Klub, Compass, Tournmedia, leguideultime).</div>
+    <div class="inspo-tabs">
+      <button class="inspo-tab active" id="inspo-tab-hooks" onclick="switchInspo('hooks', this)">🪝 Hooks vidéo partenaire</button>
+      <button class="inspo-tab" id="inspo-tab-mt" onclick="switchInspo('mt', this)">🎤 Questions micro-trottoir</button>
+    </div>
+    <div class="inspo-body" id="inspo-body"></div>
   </div>
 </div>
 
@@ -803,6 +838,89 @@ function deleteSavedScript(i, e) {
   lib.splice(i, 1);
   setLibrary(lib);
   renderLibrary();
+}
+
+// ─── INSPIRATION : top hooks + questions MT ───
+const INSPO = {
+  hooks: [
+    { group: '🏆 Mesurés sur le réseau Klub', items: [
+      { line: 'Face cam authentique — quelqu\'un parle direct caméra, ambiance perso, hook intrigant', perf: '574K vues', src: 'Klub La Rochelle', why: 'L\'algo adore la rétention. Pas de prod léchée, juste du vrai = top all-time du réseau.' },
+      { line: 'Description sensorielle en ouverture — gros plan appétissant + texte court ("…sont faites")', perf: '515K vues', src: 'Klub Nantes', why: 'On démarre sur le visuel/gourmand avant d\'expliquer le lieu.' },
+      { line: 'POV bouffe / main qui prend ("Des burgers…")', perf: '483K vues', src: 'Klub Nantes', why: 'Action de la main + plat appétissant, slow-mo de la sauce.' },
+      { line: 'Superlatif géo — "Sans doute la pizzeria avec la plus belle vue de [ville]"', perf: 'signature Bellini', src: 'Klub Toulouse', why: 'Claim fort et vérifiable à l\'image. Court, percutant.' },
+      { line: 'Concept unique = le hook — "tout se mange avec les doigts"', perf: '256K vues', src: 'Klub LR (Finger\'s)', why: 'On prend LA spécificité du lieu et on en fait l\'accroche.' },
+      { line: 'Offre directe en hook — "Ton taco c\'est offert place [X] avec Klub, on te montre comment"', perf: 'fort en conversion', src: 'Klub Toulouse', why: 'La valeur d\'emblée. Moins viral mais convertit.' },
+    ]},
+    { group: '💡 Patterns du créneau (Compass · leguideultime · Tournmedia)', items: [
+      { line: '"Le concept qui fait le tour des réseaux vient de débarquer à [ville]"', src: 'pattern créneau', why: 'FOMO + nouveauté. Marche si le concept est vraiment en vogue.' },
+      { line: '"Tu savais qu\'à [ville] tu peux [truc insolite] pour [prix dérisoire] ?"', src: 'pattern créneau', why: 'Interpellation directe + prix choc = arrêt du scroll.' },
+      { line: '"On a testé le [type] le plus [adjectif] de [ville]"', src: 'pattern créneau', why: 'Format test + superlatif, promesse claire.' },
+      { line: '"L\'endroit parfait pour [occasion : date / soirée potes / brunch dimanche]"', src: 'pattern créneau', why: 'Parle à l\'usage → identification immédiate.' },
+      { line: '"POV : t\'as enfin trouvé où sortir sans te ruiner à [ville]"', src: 'pattern créneau', why: 'POV + pain point étudiant (le budget).' },
+    ]},
+  ],
+  mt: [
+    { group: '🏆 Questions mesurées (micro Klub rose)', items: [
+      { line: '"Allez au [lieu] ?" (réponses spontanées, x3 dans la vidéo)', perf: '379K vues', src: 'Klub Poitiers', why: 'Question ultra simple, répétée. Meilleur ratio effort/vues du réseau.' },
+      { line: '"À [ville], y\'a trop de ___ ?"', perf: '203K vues', src: 'Klub Poitiers', why: 'Question ouverte locale, réponses drôles garanties.' },
+      { line: '"Où j\'ai date à [lieu toulousain] ?"', perf: '84K vues', src: 'Klub Poitiers', why: 'Sujet date = engagement fort chez les -26 ans.' },
+      { line: '"C\'est qui ton sosie ?"', perf: '60K+ vues', src: 'Klub Poitiers', why: 'Fun, léger, déclenche le sourire et le partage.' },
+    ]},
+    { group: '💡 À tester — série "RUE [VILLE] N°1, N°2…" au Capitole', items: [
+      { line: '"C\'est quoi le meilleur spot pas cher de [ville] ?"', src: 'à tester', why: 'Croise budget + recommandation locale.' },
+      { line: '"Combien tu dépenses quand tu sors à [ville] ?"', src: 'à tester', why: 'Chiffres + tabou argent = curiosité.' },
+      { line: '"Le bar le moins cher de [quartier], c\'est où ?"', src: 'à tester', why: 'Utile, ancré local, partageable.' },
+      { line: '"Ton resto coup de cœur à [ville] ?"', src: 'à tester', why: 'Positif, met en avant des partenaires potentiels.' },
+      { line: '"Pile ou face : [resto A] ou [resto B] ?"', src: 'à tester', why: 'Format duel binaire, réponses rapides au montage.' },
+    ]},
+  ],
+};
+
+function openInspo() {
+  switchInspoInternal('hooks');
+  document.getElementById('inspo-overlay').classList.add('open');
+}
+function closeInspo() { document.getElementById('inspo-overlay').classList.remove('open'); }
+function closeInspoOutside(e) { if (e.target === document.getElementById('inspo-overlay')) closeInspo(); }
+
+function switchInspo(tab, el) {
+  document.querySelectorAll('#inspo-overlay .inspo-tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  switchInspoInternal(tab);
+}
+
+function switchInspoInternal(tab) {
+  const data = INSPO[tab] || [];
+  const isHook = tab === 'hooks';
+  const body = document.getElementById('inspo-body');
+  let html = '';
+  data.forEach(grp => {
+    html += `<div><div class="inspo-group-title">${esc(grp.group)}</div>`;
+    grp.items.forEach(it => {
+      const gold = !!it.perf;
+      const tags = (it.perf ? `<span class="inspo-tag tag-perf">${esc(it.perf)}</span>` : '')
+                 + (it.src ? `<span class="inspo-tag tag-src">${esc(it.src)}</span>` : '');
+      html += `<div class="inspo-card ${gold ? 'gold' : 'pink'}" style="margin-top:8px">
+        <div class="inspo-line"><b>${esc(it.line)}</b>${tags}</div>
+        ${it.why ? `<div class="inspo-why">${esc(it.why)}</div>` : ''}
+        <span class="inspo-copy" onclick="copyInspo(this)" data-t="${esc(it.line)}">📋 Copier</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  html += `<div class="inspo-note">${isHook
+    ? 'Klub = vues réellement mesurées. Patterns créneau = observés sur Compass / leguideultime / Tournmedia (même format), sans chiffre précis public.'
+    : 'Toujours garder le micro Klub rose visible — c\'est la signature du réseau.'}</div>`;
+  body.innerHTML = html;
+}
+
+function copyInspo(el) {
+  const t = el.getAttribute('data-t') || '';
+  navigator.clipboard.writeText(t).then(() => {
+    const o = el.textContent;
+    el.textContent = '✓ Copié';
+    setTimeout(() => el.textContent = o, 1500);
+  });
 }
 
 function renderHooks() {
