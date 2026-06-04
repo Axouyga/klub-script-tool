@@ -376,6 +376,61 @@
   .inspo-copy:hover { text-decoration:underline; }
   .inspo-note { font-size:11px; color:#555; font-style:italic; padding:4px 2px; }
 
+  /* ════════════ MODE JOUR (LIGHT) ════════════ */
+  body.light {
+    --dark: #F5F3F8;
+    --dark-2: #EEEAF3;
+    --card-bg: #FFFFFF;
+    --card-bg-2: #FFFFFF;
+    --card-border: rgba(20,12,30,0.10);
+    --card-border-hi: rgba(20,12,30,0.18);
+    --text: #161122;
+    --text-muted: #6B6478;
+    --shadow-card: 0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 30px -18px rgba(80,30,60,0.35);
+    --glow-pink: 0 8px 26px -10px rgba(255,45,107,0.5);
+  }
+  body.light {
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(255,45,107,0.14), transparent 60%),
+      radial-gradient(900px 500px at 6% 2%, rgba(56,225,255,0.10), transparent 55%),
+      var(--dark);
+  }
+  body.light header {
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.7));
+    border-bottom: 1px solid var(--card-border);
+  }
+  body.light .header-tag,
+  body.light .settings-btn { background: rgba(20,12,30,0.04); }
+  body.light input[type="text"],
+  body.light input[type="password"],
+  body.light textarea,
+  body.light select { background: rgba(20,12,30,0.03); }
+  body.light input:focus, body.light textarea:focus, body.light select:focus { background: #fff; }
+  body.light input::placeholder, body.light textarea::placeholder { color: #9890a3; }
+  body.light .pill { background: rgba(20,12,30,0.03); }
+  body.light .pill:hover { background: rgba(20,12,30,0.07); }
+  body.light .step-num { background: rgba(20,12,30,0.05); border-color: rgba(20,12,30,0.18); }
+  body.light .hint, body.light .inspo-note, body.light .hook-ref { color: #8b8398; }
+
+  /* Segments du script — teintes claires */
+  body.light .seg-hook    { background:#fff0f4; border-color:#ffd1de; }
+  body.light .seg-context { background:#eef3ff; border-color:#d4e0ff; }
+  body.light .seg-product { background:#f7f6f9; border-color:#e6e3ec; }
+  body.light .seg-offer   { background:#eefaf1; border-color:#cdeed6; }
+  body.light .seg-cta     { background:#fff0f6; border-color:#ffd1e4; }
+  body.light .seg-shoot   { background:#fffaf0; border-color:#e7cf9a; }
+  body.light .seg-shoot .seg-text { color:#9a7b22; }
+  body.light .seg-text:focus { background: rgba(0,0,0,0.04); box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
+  body.light .seg-time { color:#9890a3; }
+  body.light .script-card { background:#fff; }
+  body.light .script-top { background:#faf9fc; }
+  body.light .view-btn { background:#fff; }
+  body.light .view-btn.active { background:#f0edf5; }
+  body.light .hv-chip { background:#fff0f4; border-color:#ffc9da; color:#c2184f; }
+  body.light .wc-bar { background:#faf9fc; border-color:var(--card-border); }
+  body.light .tag-src { background:#eef1ff; color:#3b5bdb; }
+  body.light .inspo-tab { background:#fff; }
+
   /* ════════════ MOBILE / TABLETTE ════════════ */
   @media (max-width: 720px) {
     /* Header compact : logo + actions sur 2 lignes propres */
@@ -450,6 +505,7 @@
       📁 Mes scripts <span id="lib-count" style="background:var(--pink);color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:1px 7px;display:none">0</span>
     </button>
     <div id="api-status" class="api-key-status missing">⚠ Clé API</div>
+    <button class="settings-btn" id="theme-btn" onclick="toggleTheme()" title="Mode jour / nuit">🌙</button>
     <button class="settings-btn" onclick="openSettings()" title="Paramètres API">⚙️</button>
     <div class="header-tag">Vidéos partenaires 🇫🇷</div>
   </div>
@@ -853,7 +909,26 @@ const HOOKS = [
 window.addEventListener('DOMContentLoaded', () => {
   refreshApiStatus();
   refreshLibraryCount();
+  initTheme();
 });
+
+// ─── THÈME JOUR / NUIT ───
+function applyTheme(mode) {
+  const light = mode === 'light';
+  document.body.classList.toggle('light', light);
+  const btn = document.getElementById('theme-btn');
+  if (btn) { btn.textContent = light ? '☀️' : '🌙'; btn.title = light ? 'Passer en mode nuit' : 'Passer en mode jour'; }
+}
+function initTheme() {
+  let mode = localStorage.getItem('klub_theme');
+  if (!mode) mode = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  applyTheme(mode);
+}
+function toggleTheme() {
+  const next = document.body.classList.contains('light') ? 'dark' : 'light';
+  localStorage.setItem('klub_theme', next);
+  applyTheme(next);
+}
 
 // ─── SAUVEGARDE / BIBLIOTHÈQUE ───
 const LIB_KEY = 'klub_saved_scripts';
