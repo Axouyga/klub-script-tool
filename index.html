@@ -385,7 +385,7 @@
 <div class="modal-overlay" id="inspo-overlay" onclick="closeInspoOutside(event)">
   <div class="modal" style="width:640px">
     <div class="modal-title">💡 Top hooks & questions MT</div>
-    <div class="modal-sub">Ce qui génère le plus de vues sur le créneau bons plans -26 ans (Klub, Compass, Tournmedia, leguideultime).</div>
+    <div class="modal-sub">Vues réellement mesurées sur le créneau bons plans -26 ans : Klub, Le Guide Ultime, Compass, Tours'n Média, Le Bonbon.</div>
     <div class="inspo-tabs">
       <button class="inspo-tab active" id="inspo-tab-hooks" onclick="switchInspo('hooks', this)">🪝 Hooks vidéo partenaire</button>
       <button class="inspo-tab" id="inspo-tab-mt" onclick="switchInspo('mt', this)">🎤 Questions micro-trottoir</button>
@@ -851,12 +851,19 @@ const INSPO = {
       { line: 'Concept unique = le hook — "tout se mange avec les doigts"', perf: '256K vues', src: 'Klub LR (Finger\'s)', why: 'On prend LA spécificité du lieu et on en fait l\'accroche.' },
       { line: 'Offre directe en hook — "Ton taco c\'est offert place [X] avec Klub, on te montre comment"', perf: 'fort en conversion', src: 'Klub Toulouse', why: 'La valeur d\'emblée. Moins viral mais convertit.' },
     ]},
-    { group: '💡 Patterns du créneau (Compass · leguideultime · Tournmedia)', items: [
-      { line: '"Le concept qui fait le tour des réseaux vient de débarquer à [ville]"', src: 'pattern créneau', why: 'FOMO + nouveauté. Marche si le concept est vraiment en vogue.' },
-      { line: '"Tu savais qu\'à [ville] tu peux [truc insolite] pour [prix dérisoire] ?"', src: 'pattern créneau', why: 'Interpellation directe + prix choc = arrêt du scroll.' },
-      { line: '"On a testé le [type] le plus [adjectif] de [ville]"', src: 'pattern créneau', why: 'Format test + superlatif, promesse claire.' },
-      { line: '"L\'endroit parfait pour [occasion : date / soirée potes / brunch dimanche]"', src: 'pattern créneau', why: 'Parle à l\'usage → identification immédiate.' },
-      { line: '"POV : t\'as enfin trouvé où sortir sans te ruiner à [ville]"', src: 'pattern créneau', why: 'POV + pain point étudiant (le budget).' },
+    { group: '🔥 Mesurés chez les concurrents (TikTok, analysé juin 2026)', items: [
+      { line: 'Plat signature en gros plan + texte 2-3 mots minuscules — "plats de ouf", "des baos"', perf: '6M / 2,8M vues', src: 'Le Guide Ultime · Paris (344K abo, 13,4M likes)', why: 'Food porn close-up. Le texte révèle rien, le visuel mange tout le cadre.' },
+      { line: 'Prix bas en GROS chiffre jaune — "5 €", "3€", "le moins cher"', perf: '1,9M / 1,7M / 1,4M', src: 'Le Guide Ultime', why: 'Le bon plan prix = leur hook le plus fort après le visuel. Exactement le créneau Klub.' },
+      { line: 'Superlatif + géo — "Le + gros tacos", "Les meilleurs burgers à Marseille"', perf: '982K / 441K', src: 'Compass · Aix-Mrs (47K abo)', why: 'Formule "[le meilleur / le + gros] X à [ville]" omniprésente dans leurs tops.' },
+      { line: 'Listicle curaté — "NOS 2 bonnes adresses hot-dog", "NOS meilleurs endroits pour dater"', perf: '423K vues', src: 'Compass', why: '"Nos adresses" = autorité de guide local, promesse de sélection.' },
+      { line: 'Distance depuis la ville — "à 10 min de Tours" + 📍 adresse précise', perf: '469K vues', src: 'Tours\'n Média · Tours (42K abo)', why: 'Rend une adresse périphérique attractive. Le 📍 ancre le guide local dès la 1ère sec.' },
+      { line: 'Ouverture / nouveauté — "OUVERTURE DEMAIN, le plus grand resto à volonté"', perf: '349K vues', src: 'Tours\'n Média', why: 'L\'angle "premier / plus grand / vient d\'ouvrir" cartonne. FOMO réel.' },
+      { line: 'Prix choc extrême — "80€" (pizza luxe) ou "pour - de 10€"', perf: '264K / 510K', src: 'Compass', why: 'Les 2 extrêmes du prix (dérisoire OU démesuré) stoppent le scroll.' },
+    ]},
+    { group: '💡 Synthèse — ce qui marche sur TOUS les comptes', items: [
+      { line: 'Prix en gros chiffre sur la vignette (bas surtout) = déclencheur n°1 du créneau bons plans', src: 'commun aux 4 comptes', why: 'Le Guide Ultime, Compass, Tours\'n Média capitalisent tous sur le prix affiché en gros.' },
+      { line: 'Accroche ultra-courte (2-3 mots, minuscules, ton parlé) — jamais la phrase complète', src: 'commun', why: 'Crée la curiosité sans tout révéler. "des baos", "Y\'a un nouveau".' },
+      { line: 'Food porn close-up : produit dégoulinant / XXL plein cadre, son ASMR', src: 'commun', why: 'Quand c\'est food, le visuel porte la vue, le texte reste minimal.' },
     ]},
   ],
   mt: [
@@ -866,9 +873,15 @@ const INSPO = {
       { line: '"Où j\'ai date à [lieu toulousain] ?"', perf: '84K vues', src: 'Klub Poitiers', why: 'Sujet date = engagement fort chez les -26 ans.' },
       { line: '"C\'est qui ton sosie ?"', perf: '60K+ vues', src: 'Klub Poitiers', why: 'Fun, léger, déclenche le sourire et le partage.' },
     ]},
-    { group: '💡 À tester — série "RUE [VILLE] N°1, N°2…" au Capitole', items: [
+    { group: '🔥 Le micro-trottoir argent = leur MOTEUR (Le Bonbon, 629K abo, 25M likes)', items: [
+      { line: '"Tu payes combien ?" (loyer / appart, en pleine rue)', perf: '9,2M vues', src: 'Le Bonbon', why: 'LE format le plus reproductible. Le montant = l\'accroche. Transposable : loyer étudiant.' },
+      { line: '"T\'as combien ?" (budget / salaire)', perf: '6,8M vues', src: 'Le Bonbon', why: 'Tabou argent = curiosité immédiate. Adapter : budget d\'une soirée à [ville].' },
+      { line: '"C\'est quoi le truc le plus débile que…" (question légère en terrasse)', perf: '5M vues', src: 'Le Bonbon', why: 'Question ouverte + fun. Réponses imprévisibles = rétention.' },
+      { line: '"Par hasard…" / hook tronqué qui ne donne jamais la réponse', perf: '3,7M vues', src: 'Le Bonbon', why: 'Le texte coupé oblige à regarder pour la suite.' },
+    ]},
+    { group: '💡 À tester — série "RUE [VILLE] N°1, N°2…" au micro Klub rose', items: [
+      { line: '"Tu dépenses combien quand tu sors à [ville] ?" (angle argent = le plus viral)', src: 'à tester · inspiré Le Bonbon', why: 'Transpose le format argent 9M+ de Le Bonbon au public étudiant.' },
       { line: '"C\'est quoi le meilleur spot pas cher de [ville] ?"', src: 'à tester', why: 'Croise budget + recommandation locale.' },
-      { line: '"Combien tu dépenses quand tu sors à [ville] ?"', src: 'à tester', why: 'Chiffres + tabou argent = curiosité.' },
       { line: '"Le bar le moins cher de [quartier], c\'est où ?"', src: 'à tester', why: 'Utile, ancré local, partageable.' },
       { line: '"Ton resto coup de cœur à [ville] ?"', src: 'à tester', why: 'Positif, met en avant des partenaires potentiels.' },
       { line: '"Pile ou face : [resto A] ou [resto B] ?"', src: 'à tester', why: 'Format duel binaire, réponses rapides au montage.' },
@@ -909,8 +922,8 @@ function switchInspoInternal(tab) {
     html += `</div>`;
   });
   html += `<div class="inspo-note">${isHook
-    ? 'Klub = vues réellement mesurées. Patterns créneau = observés sur Compass / leguideultime / Tournmedia (même format), sans chiffre précis public.'
-    : 'Toujours garder le micro Klub rose visible — c\'est la signature du réseau.'}</div>`;
+    ? 'Toutes les vues sont réellement mesurées sur TikTok (Klub + concurrents, analyse juin 2026). Aucun chiffre inventé.'
+    : 'Vues mesurées sur TikTok. Toujours garder le micro Klub rose visible — c\'est la signature du réseau. Pour Klub, garder les questions argent fun/légères (pas trop intimes).'}</div>`;
   body.innerHTML = html;
 }
 
