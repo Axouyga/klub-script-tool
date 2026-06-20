@@ -210,6 +210,8 @@
   .seg-offer { background: #0f1f0f; border-color: #1a3020; }
   .seg-cta { background: #1a0010; border-color: #2a1020; }
   .seg-shoot { background: #15110a; border: 1px dashed #5a4420; }
+  .seg-legal { background: #14110c; border: 1px dashed #4a4528; }
+  .seg-legal .seg-text { font-style: italic; color: #c9c2a0; }
   .seg-time { font-size: 10px; font-weight: 800; color: #555; min-width: 36px; padding-top: 2px; }
   .seg-hook .seg-time { color: var(--pink); }
   .seg-offer .seg-time { color: var(--green); }
@@ -222,6 +224,7 @@
   .seg-offer .seg-label { color: var(--green); }
   .seg-cta .seg-label { color: #ff88aa; }
   .seg-shoot .seg-label { color: #d4a23a; }
+  .seg-legal .seg-label { color: #c9b24a; }
   .seg-text { font-size: 13px; line-height: 1.6; outline: none; border-radius: 6px; padding: 2px 4px; margin: -2px -4px; transition: background 0.15s; }
   .seg-text:focus { background: rgba(255,255,255,0.04); box-shadow: 0 0 0 1px rgba(255,255,255,0.1); }
   .seg-text:empty:before { content: attr(data-placeholder); color: #6a5a30; font-style: italic; }
@@ -392,6 +395,8 @@
   body.light .seg-product { background:#f7f6f9; border-color:#e6e3ec; }
   body.light .seg-offer   { background:#eefaf1; border-color:#cdeed6; }
   body.light .seg-cta     { background:#fff0f6; border-color:#ffd1e4; }
+  body.light .seg-legal   { background:#faf8ef; border-color:#e6dfc2; }
+  body.light .seg-legal .seg-text { color:#7a7250; }
   body.light .seg-shoot   { background:#fffaf0; border-color:#e7cf9a; }
   body.light .seg-shoot .seg-text { color:#9a7b22; }
   body.light .seg-text:focus { background: rgba(0,0,0,0.04); box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
@@ -553,6 +558,8 @@
     <div class="inspo-tabs">
       <button class="inspo-tab active" id="inspo-tab-hooks" onclick="switchInspo('hooks', this)">🪝 Hooks vidéo partenaire</button>
       <button class="inspo-tab" id="inspo-tab-mt" onclick="switchInspo('mt', this)">🎤 Questions micro-trottoir</button>
+      <button class="inspo-tab" id="inspo-tab-viral" onclick="switchInspo('viral', this)">🧠 Viralité</button>
+      <button class="inspo-tab" id="inspo-tab-evin" onclick="switchInspo('evin', this)">⚖️ Loi Évin</button>
     </div>
     <div class="inspo-body" id="inspo-body"></div>
   </div>
@@ -997,6 +1004,36 @@ const INSPO = {
       { line: '"Pile ou face : [resto A] ou [resto B] ?"', src: 'à tester', why: 'Format duel binaire, réponses rapides au montage.' },
     ]},
   ],
+  viral: [
+    { group: '🧠 VIRALITÉ Klub — les 2 KPI : SAVE ("j\'y vais") + PARTAGE ("regarde ça")', items: [
+      { line: 'Montre une ACTIVITÉ à FAIRE, pas juste "c\'est bon".', perf: 'Rush 189K · 3,37%', src: 'data Klub', why: 'L\'expérience (jeu, défi, lieu insolite) écrase le food descriptif — #1 en saves ET en partages du réseau. Le plan à faire est le format le plus contagieux.' },
+      { line: 'Valeur pratique = le moteur du SAVE : plan concret + PRIX chiffré.', src: 'P — Practical Value', why: 'La raison de garder la vidéo ("je save pour y aller"). Règle des 100 : remise sous 100€ en % ("-40%"), au-dessus en € ("60€ de moins").' },
+      { line: 'Monnaie sociale = le moteur du PARTAGE : glisse un "tu savais que…".', src: 'S — Social Currency', why: 'Une info rare que les potes ignorent rend celui qui partage dans le coup. Joue l\'exclusivité "réservé aux -26 ans avec Klub".' },
+      { line: 'Émotion forte : surprise, démesure, fun, gourmandise sensorielle.', src: 'E — Emotion', why: 'Seule l\'émotion à forte intensité fait partager. Le tiède descriptif ne circule pas. "Le + gros…", un chiffre fou, l\'ASMR food.' },
+      { line: 'Déclencheur : ancre le spot dans un moment récurrent.', src: 'T — Triggers', why: '"La prochaine fois que tu sais pas où aller après les cours / un jeudi soir…" → le lieu revient en tête au bon moment.' },
+      { line: 'Histoire (Trojan Horse) : une anecdote où le concept est indissociable.', src: 'S — Stories', why: 'Test : si on peut raconter l\'histoire sans le lieu, c\'est raté. Le concept du spot doit être le héros.' },
+      { line: 'Public : montre des gens qui vivent le truc.', src: 'P — Public', why: 'La preuve visible donne envie d\'imiter — on voit, on veut y aller. Filme l\'usage réel, pas un plan vide.' },
+    ]},
+    { group: '🚫 Tue la viralité (mesuré flop sur le réseau)', items: [
+      { line: 'Engagement-bait : "c\'est quoi votre QG ?", "tague un pote".', perf: '0,37% — flop', src: 'data Klub', why: 'Plombe les vues. L\'appât à commentaires est puni par l\'algo ET l\'audience.' },
+      { line: 'Code promo balancé nu, sans contexte ni plan.', perf: '0,08% — flop', src: 'data Klub', why: 'Dream Away code seul = mort. Le bon plan doit être emballé dans une activité concrète.' },
+      { line: 'Superlatifs creux ("incroyable", "magnifique", "exceptionnel").', src: 'style Klub', why: 'Du concret, du sensoriel, des chiffres. Le vague ne fait ni saver ni partager.' },
+    ]},
+  ],
+  evin: [
+    { group: '⚖️ LOI ÉVIN — partenaire qui SERT DE L\'ALCOOL (bar, pub, cave, cocktails…)', items: [
+      { line: 'Hook = le LIEU / le concept, jamais une accroche sur l\'alcool.', src: 'règle', why: 'Interdit d\'associer l\'alcool à la fête / soirée / séduction / réussite. On cadre le spot, pas le verre.' },
+      { line: 'Offre alcool = factuelle et secondaire (prix OK, appât NON).', src: 'règle', why: 'Citer modalités + prix est autorisé (info objective). Modèle Bordeaux : resto cadré, alcool en accompagnement.' },
+      { line: 'Bannis : "open bar", "à volonté", "illimité", "soirée de folie".', src: 'interdit', why: 'Incitation = illégale (HPST 2009). Pas de ciblage explicite des mineurs non plus.' },
+      { line: 'L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération.', perf: 'OBLIGATOIRE', src: 'mention légale', why: 'À mettre sur tout script/post alcool. Aucune ville du réseau ne le fait → coût nul, Klub Toulouse devient le plus propre. Copie-la ↓' },
+    ]},
+    { group: '✅ Exemple conforme (Gogo Flamingo)', items: [
+      { line: 'Le spot cocktails à 2 min du Capitole. Avec Klub : 1 cocktail acheté = 1 offert, Blackberry Bomb 5€. L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération.', src: 'modèle', why: 'Lieu + modalités + prix = autorisé. Pas d\'emoji-accroche, pas de "soirée". Montre l\'offre (drive le save), ton neutre.' },
+    ]},
+    { group: '🍔 Hors Loi Évin (food / loisir / boutique / sport)', items: [
+      { line: 'Hook valeur agressif AUTORISÉ : 2-pour-1 punchy, prix cassé, emoji.', src: 'food/loisir', why: 'Pas d\'alcool = pas de Loi Évin. Tacos, escape game, cookie, resto : fonce sur l\'accroche bon plan.' },
+    ]},
+  ],
 };
 
 function openInspo() {
@@ -1033,9 +1070,13 @@ function switchInspoInternal(tab) {
     });
     html += `</div>`;
   });
-  html += `<div class="inspo-note">${isHook
-    ? 'Vues mesurées sur TikTok (analyse juin 2026). "Voir le compte" ↗ ouvre le TikTok source — les vidéos précises bougent dans le temps, mais tu retrouves le style sur le compte. Klub = données internes réseau.'
-    : 'Vues mesurées sur TikTok. "Voir le compte" ↗ ouvre la source. Garder le micro Klub rose (signature) ; questions argent fun/légères, pas trop intimes.'}</div>`;
+  const NOTES = {
+    hooks: 'Vues mesurées sur TikTok (analyse juin 2026). "Voir le compte" ↗ ouvre le TikTok source — les vidéos précises bougent dans le temps, mais tu retrouves le style sur le compte. Klub = données internes réseau.',
+    mt: 'Vues mesurées sur TikTok. "Voir le compte" ↗ ouvre la source. Garder le micro Klub rose (signature) ; questions argent fun/légères, pas trop intimes.',
+    viral: 'Framework STEPPS (Jonah Berger, "Contagious") calibré sur les données réelles du réseau Klub. But : un script qui se garde (save) ET se partage. Active 2-3 leviers, pas besoin des 6.',
+    evin: '⚠️ Repères de conformité, PAS un avis juridique. L\'annonceur reste responsable → curseur de risque validé par Lucas. La mention sanitaire est obligatoire dès qu\'un script/post parle d\'alcool.',
+  };
+  html += `<div class="inspo-note">${NOTES[tab] || ''}</div>`;
   body.innerHTML = html;
 }
 
@@ -1338,6 +1379,7 @@ function setGenLoading(on) {
 
 function segType(label) {
   const lbl = (label || '').toLowerCase();
+  if (lbl.includes('légale') || lbl.includes('legale') || lbl.includes('mention')) return 'legal';
   if (lbl.includes('hook')) return 'hook';
   if (lbl.includes('offre')) return 'offer';
   if (lbl.includes('cta') || lbl.includes('call')) return 'cta';
@@ -1544,7 +1586,13 @@ function buildScript({ name, cat, city, address, unique, extra, offerUW, offerUC
     segments.push({ type: 'cta',     time: fmt(offerTs.start + offerTs.words/WPS),  label: '📣 Call to action',     text: ctaText });
   }
 
-  return insertShootSegment(segments);
+  const out = insertShootSegment(segments);
+  // Loi Évin : mention sanitaire obligatoire en dernier si le partenaire sert de l'alcool
+  if (isAlcohol(cat, unique, extra, offerUW, offerPW)) {
+    out.push({ type: 'legal', time: '', label: '⚠️ Mention légale',
+      text: 'L\'abus d\'alcool est dangereux pour la santé, à consommer avec modération.' });
+  }
+  return out;
 }
 
 function fmt(s) { return Math.round(s) + 's'; }
@@ -1554,6 +1602,13 @@ function fmt(s) { return Math.round(s) + 's'; }
 function catLabel(cat) {
   const m = { restaurant:'restaurant', bar:'bar', cafe:'café', boutique:'boutique', sport:'salle de sport', loisir:'activité', beaute:'institut' };
   return m[cat] || cat;
+}
+
+// Loi Évin : le partenaire sert-il de l'alcool ? (catégorie bar OU mots-clés dans les champs libres)
+function isAlcohol(cat, ...fields) {
+  if (cat === 'bar') return true;
+  const hay = fields.filter(Boolean).join(' ').toLowerCase();
+  return /(alcool|bi[èe]re|pinte|vin\b|cocktail|spritz|mojito|\bshot|ap[ée]ro|champagne|\brhum|whisky|happy hour|brasserie|\bpub\b|cave [àa] vin)/.test(hay);
 }
 
 function buildContextLine(cat, tone, name) {
@@ -1796,7 +1851,7 @@ function sgRevealOutput() { const o = document.getElementById('output-section');
 const SG_TOUR = [
   { sel: null, title: '👋 Bienvenue', body: 'Cet outil génère un <b>script de vidéo partenaire</b> au style Klub en ~2 min. Je te montre chaque étape — clique <b>Suivant</b>.' },
   { sel: '#btn-search', act: () => sgOpenStep('step1'), title: '1 · Recherche IA', body: 'Tape le <b>nom du partenaire</b> et lance la recherche : l\'outil cherche en ligne (adresse, concept, spécialités, prix) et <b>remplit la fiche tout seul</b>.' },
-  { sel: 'header button[onclick="openInspo()"]', title: '💡 Inspiration', body: 'Une bibliothèque de <b>hooks vidéo</b> et de <b>questions micro-trottoir</b> qui ont vraiment marché (vraies vues). De quoi ne jamais manquer d\'accroche.' },
+  { sel: 'header button[onclick="openInspo()"]', title: '💡 Inspiration & règles', body: '4 onglets : <b>hooks vidéo</b> et <b>questions micro-trottoir</b> qui ont vraiment marché (vraies vues), <b>🧠 Viralité</b> (les leviers save + partage) et <b>⚖️ Loi Évin</b> (règles alcool + mention obligatoire). De quoi ne jamais manquer d\'accroche — ni faire d\'erreur légale.' },
   { sel: '#partner-unique', act: () => sgOpenStep('step1'), title: 'Le concept = le hook', body: 'Complète ou corrige ce qui rend le lieu <b>unique</b>. C\'est l\'élément le plus important : c\'est ce qui accroche dès les 2 premières secondes.' },
   { sel: '#step2 .step-head', act: () => sgOpenStep('step2'), title: '2 · La fiche', body: 'L\'IA structure les infos trouvées (adresse, quartier, ambiance, prix…). Tu peux <b>tout éditer</b> avant de générer — rien n\'est figé.' },
   { sel: '#step3 .step-head', act: () => sgOpenStep('step3'), title: '3 · Réglages', body: 'Choisis la <b>durée</b> (15→60 s), le <b>ton</b> (casual, enthousiaste, narratif…) et le <b>format</b> (voix off, face cam, micro-trottoir).' },

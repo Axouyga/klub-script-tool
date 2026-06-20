@@ -104,6 +104,22 @@ RÈGLES ABSOLUES :
 7. LONGUEUR : écris un script COMPLET et riche qui ATTEINT la cible de mots demandée (ne fais pas trop court). Détaille les produits, l'expérience, l'ambiance, les détails sensoriels comme dans les exemples. Vise au minimum la cible, quitte à dépasser légèrement.
 8. Rythme : enchaîne les phrases courtes et percutantes, descriptions gourmandes/concrètes, sans temps mort.
 
+VIRALITÉ — écris un script FAIT POUR ÊTRE GARDÉ (save) ET PARTAGÉ : ce sont les 2 vrais KPI Klub (un save = "j'y vais", un partage = "regarde ça"). Active au moins 2-3 de ces leviers (framework STEPPS) dans CHAQUE script :
+- ACTIVITÉ / PLAN avant tout : ce qu'on FAIT sur place (jeu, défi, expérience, lieu insolite) écrase le simple "c'est bon". Sur Klub, les vidéos d'activité font x10–x50 les vidéos descriptives. Si le lieu propose une expérience, mets-la au cœur du script.
+- VALEUR PRATIQUE = le moteur du SAVE : un plan CONCRET + le PRIX / l'offre chiffrée donnent la raison de garder la vidéo ("je save pour y aller"). Règle des 100 : remise sous 100€ en pourcentage ("-40%"), remise au-dessus de 100€ en euros ("60€ de moins").
+- MONNAIE SOCIALE = le moteur du PARTAGE : glisse une info remarquable "tu savais que…" / un détail rare que les potes ignorent → partager rend le viewer dans le coup. Joue l'exclusivité ("réservé aux -26 ans avec Klub").
+- ÉMOTION FORTE : surprise / démesure ("le + gros…", un chiffre fou), amusement, gourmandise sensorielle. Jamais le tiède descriptif : seule l'émotion à forte intensité fait partager.
+- DÉCLENCHEUR : ancre le spot dans un moment récurrent ("la prochaine fois que tu sais pas où aller après les cours / un jeudi soir…") → le lieu revient en tête au bon moment.
+- HISTOIRE (Trojan Horse) : emballe le bon plan dans une mini-anecdote vécue où le CONCEPT est indissociable du lieu. Test : si on peut raconter l'histoire sans le spot, c'est raté.
+INTERDIT viralité : pas d'engagement-bait ("c'est quoi votre QG ?", "tague un pote") — ça plombe les vues sur le réseau ; pas de code promo balancé sans contexte. Le concret et le plan font tout le travail.
+
+LOI ÉVIN — si le partenaire SERT DE L'ALCOOL (bar, pub, club, cave, brasserie, ou offre/spécialité citant bière, vin, cocktail, pinte, spritz, shot, apéro, champagne, rhum, whisky, happy hour…), passe en MODE CONFORME :
+- Le hook cadre le LIEU / le concept / le spot — JAMAIS une accroche racoleuse sur l'alcool. Interdit d'associer l'alcool à la fête / soirée / ambiance / séduction / réussite.
+- L'offre alcool est énoncée de façon FACTUELLE et SECONDAIRE (citer modalités et prix est autorisé, mais pas comme appât). Modèle conforme : on cadre le resto / le spot, l'alcool vient en accompagnement.
+- BANNIS absolument : "open bar", "à volonté", "illimité", "soirée de folie", toute incitation à consommer.
+- AJOUTE OBLIGATOIREMENT un dernier segment, APRÈS le CTA : {"label": "⚠️ Mention légale", "text": "L'abus d'alcool est dangereux pour la santé, à consommer avec modération."} — c'est légalement obligatoire et ça rend Klub le compte le plus propre du réseau.
+Si le partenaire est food / loisir / boutique / sport (sans alcool), on n'est PAS sous Loi Évin : hook valeur agressif autorisé (2-pour-1 punchy, prix cassé), fonce.
+
 Tu retournes UNIQUEMENT un JSON valide :
 {
   "hook_variants": ["hook 1 (< 8 mots, le + fort)", "hook 2 (autre angle)", "hook 3 (autre angle)"],
@@ -116,7 +132,7 @@ Tu retournes UNIQUEMENT un JSON valide :
   ]
 }
 "hook_variants" = 3 accroches DIFFÉRENTES et fortes pour la 1ère seconde, chacune < 8 mots, ton oral, angles variés (prix / superlatif géo / concept). Le 1er = le meilleur, et c'est lui qui ouvre "segments".
-Adapte le nombre de segments à la durée (15s = 3 segments max, 60s = 5). Aucun texte hors du JSON."""
+Adapte le nombre de segments à la durée (15s = 3 segments max, 60s = 5) ; le segment "⚠️ Mention légale" (alcool) s'ajoute EN PLUS et ne compte pas dans cette limite. Aucun texte hors du JSON."""
 
 
 def call_script(data: dict, api_key: str) -> dict:
